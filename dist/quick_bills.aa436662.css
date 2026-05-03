@@ -13519,4 +13519,207 @@ hr {
   padding: .8rem;
   font-size: .85rem;
 }
+
+.bh-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  font-family: Helvetica Neue, Inter, sans-serif;
+}
+
+.bh-header {
+  margin-bottom: 2.5rem;
+}
+
+.bh-header h2 {
+  color: #2d3436;
+  letter-spacing: -.5px;
+  margin-bottom: .25rem;
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.bh-header p {
+  color: #636e72;
+  margin: 0;
+  font-size: .95rem;
+}
+
+.bh-kpi-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+  display: grid;
+}
+
+.bh-kpi-card {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all .25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.bh-kpi-card:before {
+  content: "";
+  border-radius: 16px 0 0 16px;
+  width: 4px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.bh-kpi-card.revenue:before {
+  background: #0984e3;
+}
+
+.bh-kpi-card.paid:before {
+  background: #00b894;
+}
+
+.bh-kpi-card.pending:before {
+  background: #fdcb6e;
+}
+
+.bh-kpi-card.tax:before {
+  background: #6c5ce7;
+}
+
+.bh-kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px #00000014;
+}
+
+.bh-kpi-label {
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #636e72;
+  margin-bottom: .5rem;
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+.bh-kpi-value {
+  color: #2d3436;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.bh-kpi-sub {
+  color: #b2bec3;
+  margin-top: .5rem;
+  font-size: .8rem;
+}
+
+.bh-chart-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  display: grid;
+}
+
+@media (width <= 768px) {
+  .bh-chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bh-chart-card {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  padding: 1.75rem;
+}
+
+.bh-chart-title {
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #636e72;
+  border-bottom: 2px solid #2d3436;
+  margin-bottom: 1.5rem;
+  padding-bottom: .75rem;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.bh-loading {
+  color: #636e72;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  display: flex;
+}
+
+.bh-loading .spinner {
+  border: 3px solid #e9ecef;
+  border-top-color: #2d3436;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 1rem;
+  animation: .8s linear infinite spin;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.bh-empty {
+  text-align: center;
+  color: #636e72;
+  padding: 4rem 2rem;
+}
+
+.bh-empty h3 {
+  color: #2d3436;
+  margin-bottom: .5rem;
+  font-weight: 700;
+}
+
+.bh-tax-card {
+  color: #fff;
+  background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+  border: none;
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+.bh-tax-card .bh-chart-title {
+  color: #fff9;
+  border-bottom-color: #ffffff26;
+}
+
+.bh-tax-value {
+  margin-bottom: .25rem;
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.bh-tax-label {
+  color: #ffffff80;
+  font-size: .85rem;
+}
+
+.bh-back {
+  color: #636e72;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: 1.5rem;
+  font-size: .85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color .2s;
+  display: inline-flex;
+}
+
+.bh-back:hover {
+  color: #2d3436;
+}
 /*# sourceMappingURL=quick_bills.aa436662.css.map */
