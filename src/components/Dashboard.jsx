@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { Container, Table, Button, Badge, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { BiPlus, BiFile, BiShow } from "react-icons/bi";
+import { BiPlus, BiFile, BiShow, BiBarChartAlt2 } from "react-icons/bi";
 
 const Dashboard = () => {
   const [invoices, setInvoices] = useState([]);
@@ -41,13 +41,22 @@ const Dashboard = () => {
           <h2 className="fw-bold">Your Invoices</h2>
           <p className="text-muted">Manage and track all your bills in one place.</p>
         </div>
-        <Button 
-          variant="primary" 
-          className="d-flex align-items-center gap-2 px-4 py-2 shadow-sm"
-          onClick={() => navigate("/create")}
-        >
-          <BiPlus size={20} /> New Invoice
-        </Button>
+        <div className="d-flex gap-2">
+          <Button 
+            variant="outline-dark" 
+            className="d-flex align-items-center gap-2 px-4 py-2"
+            onClick={() => navigate("/analytics")}
+          >
+            <BiBarChartAlt2 size={20} /> Business Health
+          </Button>
+          <Button 
+            variant="primary" 
+            className="d-flex align-items-center gap-2 px-4 py-2 shadow-sm"
+            onClick={() => navigate("/create")}
+          >
+            <BiPlus size={20} /> New Invoice
+          </Button>
+        </div>
       </div>
 
       {loading ? (

@@ -6,6 +6,7 @@ import { Button, Navbar, Container, Spinner } from "react-bootstrap";
 import InvoiceForm from "./components/InvoiceForm";
 import Auth from "./components/Auth";
 import Dashboard from "./components/Dashboard";
+import BusinessHealth from "./components/BusinessHealth";
 import { supabase } from "./supabaseClient";
 
 // 🛡️ Middleware-style Protected Route component
@@ -88,6 +89,15 @@ const App = () => {
             element={
               <ProtectedRoute session={session}>
                 <InvoiceForm />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/analytics" 
+            element={
+              <ProtectedRoute session={session}>
+                <BusinessHealth />
               </ProtectedRoute>
             } 
           />
