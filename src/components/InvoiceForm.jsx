@@ -12,6 +12,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useUpsertInvoice } from "../hooks/useUpsertInvoice";
 import { supabase } from "../supabaseClient";
+import { calculateGST, GST_SLABS } from "../utils/gstCalculator";
 
 const InvoiceForm = () => {
   // ── Supabase upsert hook ──
@@ -49,6 +50,12 @@ const InvoiceForm = () => {
   const [discountAmount, setDiscountAmount] = useState("0.00");
   const [status, setStatus] = useState("draft");
 
+  // ── GST State ──
+  const [gstType, setGstType] = useState("none"); // "none" | "intra" | "inter"
+  const [cgst, setCgst] = useState("0.00");
+  const [sgst, setSgst] = useState("0.00");
+  const [igst, setIgst] = useState("0.00");
+
   const [items, setItems] = useState([
     {
       id: (+new Date() + Math.floor(Math.random() * 999999)).toString(36),
@@ -60,25 +67,28 @@ const InvoiceForm = () => {
   ]);
 
   const handleCalculateTotal = useCallback(() => {
-    let newSubTotal = items
+    const newSubTotal = items
       .reduce((acc, item) => {
         return acc + parseFloat(item.price) * parseInt(item.quantity);
       }, 0)
       .toFixed(2);
 
-    let newtaxAmount = (newSubTotal * (taxRate / 100)).toFixed(2);
-    let newdiscountAmount = (newSubTotal * (discountRate / 100)).toFixed(2);
-    let newTotal = (
-      newSubTotal -
-      newdiscountAmount +
-      parseFloat(newtaxAmount)
-    ).toFixed(2);
+    // Use the GST calculator for tax computation
+    const gstResult = calculateGST(
+      parseFloat(newSubTotal),
+      parseFloat(taxRate) || 0,
+      gstType,
+      parseFloat(discountRate) || 0
+    );
 
     setSubTotal(newSubTotal);
-    setTaxAmount(newtaxAmount);
-    setDiscountAmount(newdiscountAmount);
-    setTotal(newTotal);
-  }, [items, taxRate, discountRate]);
+    setDiscountAmount(gstResult.discountAmount.toFixed(2));
+    setCgst(gstResult.cgst.toFixed(2));
+    setSgst(gstResult.sgst.toFixed(2));
+    setIgst(gstResult.igst.toFixed(2));
+    setTaxAmount(gstResult.totalTax.toFixed(2));
+    setTotal(gstResult.total.toFixed(2));
+  }, [items, taxRate, discountRate, gstType]);
 
   useEffect(() => {
     handleCalculateTotal();
@@ -116,6 +126,8 @@ const InvoiceForm = () => {
         setDiscountRate(data.discount_rate);
         setNotes(data.notes);
         setStatus(data.status || "draft");
+        // Restore GST type if stored in notes or default to "none"
+        if (data.gst_type) setGstType(data.gst_type);
       }
     } catch (err) {
       console.error("Error loading invoice:", err.message);
@@ -311,6 +323,8 @@ const InvoiceForm = () => {
               currency={currency}
               items={items}
             />
+
+            {/* ── Totals & GST Breakdown ── */}
             <Row className="mt-4 justify-content-end">
               <Col lg={6}>
                 <div className="d-flex flex-row align-items-start justify-content-between">
@@ -320,22 +334,56 @@ const InvoiceForm = () => {
                     {subTotal}
                   </span>
                 </div>
-                <div className="d-flex flex-row align-items-start justify-content-between mt-2">
-                  <span className="fw-bold">Discount:</span>
-                  <span>
-                    <span className="small ">({discountRate || 0}%)</span>
-                    {currency}
-                    {discountAmount || 0}
-                  </span>
-                </div>
-                <div className="d-flex flex-row align-items-start justify-content-between mt-2">
-                  <span className="fw-bold">Tax:</span>
-                  <span>
-                    <span className="small ">({taxRate || 0}%)</span>
-                    {currency}
-                    {taxAmount || 0}
-                  </span>
-                </div>
+
+                {parseFloat(discountAmount) > 0 && (
+                  <div className="d-flex flex-row align-items-start justify-content-between mt-2">
+                    <span className="fw-bold">Discount:</span>
+                    <span>
+                      <span className="small">({discountRate || 0}%)</span> -{currency}
+                      {discountAmount}
+                    </span>
+                  </div>
+                )}
+
+                {/* GST Breakdown */}
+                {gstType === "intra" && parseFloat(taxRate) > 0 && (
+                  <>
+                    <div className="d-flex flex-row align-items-start justify-content-between mt-2">
+                      <span className="fw-bold text-success">CGST:</span>
+                      <span>
+                        <span className="small">({(parseFloat(taxRate) / 2).toFixed(1)}%)</span>{" "}
+                        {currency}{cgst}
+                      </span>
+                    </div>
+                    <div className="d-flex flex-row align-items-start justify-content-between mt-2">
+                      <span className="fw-bold text-success">SGST:</span>
+                      <span>
+                        <span className="small">({(parseFloat(taxRate) / 2).toFixed(1)}%)</span>{" "}
+                        {currency}{sgst}
+                      </span>
+                    </div>
+                  </>
+                )}
+
+                {gstType === "inter" && parseFloat(taxRate) > 0 && (
+                  <div className="d-flex flex-row align-items-start justify-content-between mt-2">
+                    <span className="fw-bold text-primary">IGST:</span>
+                    <span>
+                      <span className="small">({taxRate}%)</span> {currency}{igst}
+                    </span>
+                  </div>
+                )}
+
+                {gstType === "none" && parseFloat(taxAmount) > 0 && (
+                  <div className="d-flex flex-row align-items-start justify-content-between mt-2">
+                    <span className="fw-bold">Tax:</span>
+                    <span>
+                      <span className="small">({taxRate || 0}%)</span> {currency}
+                      {taxAmount}
+                    </span>
+                  </div>
+                )}
+
                 <hr />
                 <div
                   className="d-flex flex-row align-items-start justify-content-between"
@@ -385,6 +433,11 @@ const InvoiceForm = () => {
               discountAmount={discountAmount}
               total={total}
               status={status}
+              gstType={gstType}
+              taxRate={taxRate}
+              cgst={cgst}
+              sgst={sgst}
+              igst={igst}
             />
 
             <Form.Group className="mb-3">
@@ -421,8 +474,45 @@ const InvoiceForm = () => {
                 <option value="₿">BTC (Bitcoin)</option>
               </Form.Select>
             </Form.Group>
+
+            {/* ── GST Type Selector ── */}
+            <Form.Group className="mb-3">
+              <Form.Label className="fw-bold">GST Type:</Form.Label>
+              <Form.Select
+                value={gstType}
+                onChange={(e) => setGstType(e.target.value)}
+                className="btn btn-light my-1"
+              >
+                <option value="none">No GST</option>
+                <option value="intra">Intra-State (CGST + SGST)</option>
+                <option value="inter">Inter-State (IGST)</option>
+              </Form.Select>
+            </Form.Group>
+
+            {/* ── GST Rate with Slab Presets ── */}
             <Form.Group className="my-3">
-              <Form.Label className="fw-bold">Tax rate:</Form.Label>
+              <Form.Label className="fw-bold">
+                {gstType === "none" ? "Tax rate:" : "GST rate:"}
+              </Form.Label>
+              {gstType !== "none" && (
+                <div className="d-flex gap-1 mb-2 flex-wrap">
+                  {GST_SLABS.map((slab) => (
+                    <Button
+                      key={slab}
+                      size="sm"
+                      variant={
+                        parseFloat(taxRate) === slab
+                          ? "primary"
+                          : "outline-secondary"
+                      }
+                      onClick={() => setTaxRate(slab)}
+                      style={{ minWidth: "42px", fontSize: "0.75rem" }}
+                    >
+                      {slab}%
+                    </Button>
+                  ))}
+                </div>
+              )}
               <InputGroup className="my-1 flex-nowrap">
                 <Form.Control
                   name="taxRate"
@@ -439,7 +529,14 @@ const InvoiceForm = () => {
                   %
                 </InputGroup.Text>
               </InputGroup>
+              {gstType === "intra" && parseFloat(taxRate) > 0 && (
+                <div className="small text-muted mt-1">
+                  CGST: {(parseFloat(taxRate) / 2).toFixed(1)}% + SGST:{" "}
+                  {(parseFloat(taxRate) / 2).toFixed(1)}%
+                </div>
+              )}
             </Form.Group>
+
             <Form.Group className="my-3">
               <Form.Label className="fw-bold">Discount rate:</Form.Label>
               <InputGroup className="my-1 flex-nowrap">

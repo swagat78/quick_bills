@@ -20,6 +20,11 @@ const InvoiceModal = ({
   discountAmount,
   subTotal,
   status,
+  gstType,
+  taxRate,
+  cgst,
+  sgst,
+  igst,
 }) => {
   const invoiceRef = useRef();
 
@@ -275,7 +280,52 @@ const InvoiceModal = ({
                 </span>
                 <span>{currency}{subTotal}</span>
               </div>
-              {parseFloat(taxAmount) > 0 && (
+              {gstType === "intra" && parseFloat(cgst) > 0 && (
+                <>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      padding: "6px 0",
+                      fontSize: "13px",
+                    }}
+                  >
+                    <span style={{ color: "#00b894", textTransform: "uppercase", fontSize: "10px", letterSpacing: "1px", fontWeight: 700 }}>
+                      CGST ({(parseFloat(taxRate) / 2).toFixed(1)}%)
+                    </span>
+                    <span>{currency}{cgst}</span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      padding: "6px 0",
+                      fontSize: "13px",
+                    }}
+                  >
+                    <span style={{ color: "#00b894", textTransform: "uppercase", fontSize: "10px", letterSpacing: "1px", fontWeight: 700 }}>
+                      SGST ({(parseFloat(taxRate) / 2).toFixed(1)}%)
+                    </span>
+                    <span>{currency}{sgst}</span>
+                  </div>
+                </>
+              )}
+              {gstType === "inter" && parseFloat(igst) > 0 && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "6px 0",
+                    fontSize: "13px",
+                  }}
+                >
+                  <span style={{ color: "#0984e3", textTransform: "uppercase", fontSize: "10px", letterSpacing: "1px", fontWeight: 700 }}>
+                    IGST ({taxRate}%)
+                  </span>
+                  <span>{currency}{igst}</span>
+                </div>
+              )}
+              {(!gstType || gstType === "none") && parseFloat(taxAmount) > 0 && (
                 <div
                   style={{
                     display: "flex",
