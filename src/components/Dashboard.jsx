@@ -1,13 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { Container, Table, Button, Badge, Spinner } from "react-bootstrap";
+import { Container, Table, Button, Badge, Spinner, Dropdown, ButtonGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { BiPlus, BiFile, BiShow, BiBarChartAlt2 } from "react-icons/bi";
+import { BiPlus, BiFile, BiShow, BiBarChartAlt2, BiDownload } from "react-icons/bi";
+import { exportAsCSV, exportAsExcel } from "../utils/exportInvoices";
 
 const Dashboard = () => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
   const navigate = useNavigate();
+
+  const handleExport = async (format) => {
+    try {
+      setExporting(true);
+      if (format === "csv") {
+        await exportAsCSV();
+      } else {
+        await exportAsExcel();
+      }
+    } catch (err) {
+      alert(err.message || "Export failed.");
+    } finally {
+      setExporting(false);
+    }
+  };
 
   useEffect(() => {
     fetchInvoices();
@@ -41,17 +58,41 @@ const Dashboard = () => {
           <h2 className="fw-bold">Your Invoices</h2>
           <p className="text-muted">Manage and track all your bills in one place.</p>
         </div>
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 flex-wrap">
+          <Dropdown as={ButtonGroup}>
+            <Button
+              variant="outline-secondary"
+              className="d-flex align-items-center gap-2 px-3 py-2"
+              onClick={() => handleExport("excel")}
+              disabled={exporting || invoices.length === 0}
+            >
+              <BiDownload size={18} />
+              {exporting ? "Exporting..." : "Export"}
+            </Button>
+            <Dropdown.Toggle
+              split
+              variant="outline-secondary"
+              disabled={exporting || invoices.length === 0}
+            />
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => handleExport("excel")}>
+                📊 Excel (.xlsx)
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => handleExport("csv")}>
+                📄 CSV (.csv)
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
           <Button 
             variant="outline-dark" 
-            className="d-flex align-items-center gap-2 px-4 py-2"
+            className="d-flex align-items-center gap-2 px-3 py-2"
             onClick={() => navigate("/analytics")}
           >
             <BiBarChartAlt2 size={20} /> Business Health
           </Button>
           <Button 
             variant="primary" 
-            className="d-flex align-items-center gap-2 px-4 py-2 shadow-sm"
+            className="d-flex align-items-center gap-2 px-3 py-2 shadow-sm"
             onClick={() => navigate("/create")}
           >
             <BiPlus size={20} /> New Invoice
