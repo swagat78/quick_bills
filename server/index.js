@@ -75,25 +75,28 @@ app.post("/api/ai-invoice", async (req, res) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        systemInstruction: {
+          parts: [{ text: SYSTEM_PROMPT }],
+        },
         contents: [
           {
-            parts: [
-              { text: SYSTEM_PROMPT },
-              { text: `User prompt: "${prompt}"` },
-            ],
+            role: "user",
+            parts: [{ text: prompt }],
           },
         ],
         generationConfig: {
-          temperature: 0.1, // Low temperature for deterministic output
+          temperature: 0.1,
           maxOutputTokens: 1024,
+          responseMimeType: "application/json",
         },
       }),
     });
 
     if (!response.ok) {
-      const errText = await response.text();
-      console.error("Gemini API error:", errText);
-      return res.status(502).json({ error: "Gemini API returned an error." });
+      const errBody = await response.json().catch(() => ({}));
+      const errMsg = errBody?.error?.message || "Unknown Gemini API error";
+      console.error("Gemini API error:", errMsg);
+      return res.status(502).json({ error: errMsg });
     }
 
     const data = await response.json();
