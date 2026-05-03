@@ -13,6 +13,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useUpsertInvoice } from "../hooks/useUpsertInvoice";
 import { supabase } from "../supabaseClient";
 import { calculateGST, GST_SLABS } from "../utils/gstCalculator";
+import AIPrompt from "./AIPrompt";
 
 const InvoiceForm = () => {
   // ── Supabase upsert hook ──
@@ -207,10 +208,44 @@ const InvoiceForm = () => {
     }
   };
 
+  // ── AI Auto-Fill handler ──
+  const handleAIAutoFill = (aiData) => {
+    // Map AI items to our format with unique IDs
+    if (aiData.items && aiData.items.length > 0) {
+      const mappedItems = aiData.items.map((item) => ({
+        id: (+new Date() + Math.floor(Math.random() * 999999)).toString(36),
+        name: item.name || "",
+        description: item.description || "",
+        price: String(item.price || "1.00"),
+        quantity: parseInt(item.quantity) || 1,
+      }));
+      setItems(mappedItems);
+    }
+
+    // Fill client info
+    if (aiData.billTo) setBillTo(aiData.billTo);
+    if (aiData.billToEmail) setBillToEmail(aiData.billToEmail);
+    if (aiData.billToAddress) setBillToAddress(aiData.billToAddress);
+
+    // Tax & GST
+    if (aiData.taxRate !== undefined) setTaxRate(aiData.taxRate);
+    if (aiData.gstType) setGstType(aiData.gstType);
+    if (aiData.discountRate !== undefined) setDiscountRate(aiData.discountRate);
+
+    // Currency
+    if (aiData.currency) setCurrency(aiData.currency);
+
+    // Notes
+    if (aiData.notes) setNotes(aiData.notes);
+  };
+
   return (
     <Form onSubmit={openModal}>
       <Row>
         <Col md={8} lg={9}>
+          {/* ── AI Auto-Fill Bar ── */}
+          <AIPrompt onAutoFill={handleAIAutoFill} />
+
           <Card className="p-4 p-xl-5 my-3 my-xl-4">
             <div className="d-flex flex-row align-items-start justify-content-between mb-3">
               <div className="d-flex flex-column">

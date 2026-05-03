@@ -35252,6 +35252,8 @@ var _reactRouterDom = require("react-router-dom");
 var _useUpsertInvoice = require("../hooks/useUpsertInvoice");
 var _supabaseClient = require("../supabaseClient");
 var _gstCalculator = require("../utils/gstCalculator");
+var _aiprompt = require("./AIPrompt");
+var _aipromptDefault = parcelHelpers.interopDefault(_aiprompt);
 var _s = $RefreshSig$();
 const InvoiceForm = ()=>{
     _s();
@@ -35417,6 +35419,32 @@ const InvoiceForm = ()=>{
         });
         if (result?.id) setInvoiceId(result.id); // pin the ID for future updates
     };
+    // ── AI Auto-Fill handler ──
+    const handleAIAutoFill = (aiData)=>{
+        // Map AI items to our format with unique IDs
+        if (aiData.items && aiData.items.length > 0) {
+            const mappedItems = aiData.items.map((item)=>({
+                    id: (+new Date() + Math.floor(Math.random() * 999999)).toString(36),
+                    name: item.name || "",
+                    description: item.description || "",
+                    price: String(item.price || "1.00"),
+                    quantity: parseInt(item.quantity) || 1
+                }));
+            setItems(mappedItems);
+        }
+        // Fill client info
+        if (aiData.billTo) setBillTo(aiData.billTo);
+        if (aiData.billToEmail) setBillToEmail(aiData.billToEmail);
+        if (aiData.billToAddress) setBillToAddress(aiData.billToAddress);
+        // Tax & GST
+        if (aiData.taxRate !== undefined) setTaxRate(aiData.taxRate);
+        if (aiData.gstType) setGstType(aiData.gstType);
+        if (aiData.discountRate !== undefined) setDiscountRate(aiData.discountRate);
+        // Currency
+        if (aiData.currency) setCurrency(aiData.currency);
+        // Notes
+        if (aiData.notes) setNotes(aiData.notes);
+    };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default), {
         onSubmit: openModal,
         children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _rowDefault.default), {
@@ -35424,587 +35452,596 @@ const InvoiceForm = ()=>{
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _colDefault.default), {
                     md: 8,
                     lg: 9,
-                    children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _cardDefault.default), {
-                        className: "p-4 p-xl-5 my-3 my-xl-4",
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                className: "d-flex flex-row align-items-start justify-content-between mb-3",
-                                children: [
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                        className: "d-flex flex-column",
-                                        children: [
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                className: "d-flex flex-column",
-                                                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                    className: "mb-2",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _aipromptDefault.default), {
+                            onAutoFill: handleAIAutoFill
+                        }, void 0, false, {
+                            fileName: "src/components/InvoiceForm.jsx",
+                            lineNumber: 247,
+                            columnNumber: 11
+                        }, undefined),
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _cardDefault.default), {
+                            className: "p-4 p-xl-5 my-3 my-xl-4",
+                            children: [
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                    className: "d-flex flex-row align-items-start justify-content-between mb-3",
+                                    children: [
+                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                            className: "d-flex flex-column",
+                                            children: [
+                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                    className: "d-flex flex-column",
+                                                    children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                        className: "mb-2",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                className: "fw-bold",
+                                                                children: "Current\xa0Date:\xa0"
+                                                            }, void 0, false, {
+                                                                fileName: "src/components/InvoiceForm.jsx",
+                                                                lineNumber: 254,
+                                                                columnNumber: 21
+                                                            }, undefined),
+                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                className: "current-date",
+                                                                children: currentDate
+                                                            }, void 0, false, {
+                                                                fileName: "src/components/InvoiceForm.jsx",
+                                                                lineNumber: 255,
+                                                                columnNumber: 21
+                                                            }, undefined)
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "src/components/InvoiceForm.jsx",
+                                                        lineNumber: 253,
+                                                        columnNumber: 19
+                                                    }, undefined)
+                                                }, void 0, false, {
+                                                    fileName: "src/components/InvoiceForm.jsx",
+                                                    lineNumber: 252,
+                                                    columnNumber: 17
+                                                }, undefined),
+                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                    className: "d-flex flex-row align-items-center",
                                                     children: [
                                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                            className: "fw-bold",
-                                                            children: "Current\xa0Date:\xa0"
+                                                            className: "fw-bold d-block me-2",
+                                                            children: "Due\xa0Date:"
                                                         }, void 0, false, {
                                                             fileName: "src/components/InvoiceForm.jsx",
-                                                            lineNumber: 219,
-                                                            columnNumber: 21
+                                                            lineNumber: 259,
+                                                            columnNumber: 19
                                                         }, undefined),
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                            className: "current-date",
-                                                            children: currentDate
+                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
+                                                            type: "date",
+                                                            value: dateOfIssue,
+                                                            name: "dateOfIssue",
+                                                            onChange: handleChange(setDateOfIssue),
+                                                            style: {
+                                                                maxWidth: "150px"
+                                                            },
+                                                            required: true
                                                         }, void 0, false, {
                                                             fileName: "src/components/InvoiceForm.jsx",
-                                                            lineNumber: 220,
-                                                            columnNumber: 21
+                                                            lineNumber: 260,
+                                                            columnNumber: 19
                                                         }, undefined)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "src/components/InvoiceForm.jsx",
-                                                    lineNumber: 218,
-                                                    columnNumber: 19
+                                                    lineNumber: 258,
+                                                    columnNumber: 17
                                                 }, undefined)
-                                            }, void 0, false, {
-                                                fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 217,
-                                                columnNumber: 17
-                                            }, undefined),
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "src/components/InvoiceForm.jsx",
+                                            lineNumber: 251,
+                                            columnNumber: 15
+                                        }, undefined),
+                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                            className: "d-flex flex-row align-items-center",
+                                            children: [
+                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                    className: "fw-bold me-2",
+                                                    children: "Invoice\xa0Number:\xa0"
+                                                }, void 0, false, {
+                                                    fileName: "src/components/InvoiceForm.jsx",
+                                                    lineNumber: 271,
+                                                    columnNumber: 17
+                                                }, undefined),
+                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
+                                                    type: "number",
+                                                    value: invoiceNumber,
+                                                    name: "invoiceNumber",
+                                                    onChange: handleChange(setInvoiceNumber),
+                                                    min: "1",
+                                                    style: {
+                                                        maxWidth: "70px"
+                                                    },
+                                                    required: true
+                                                }, void 0, false, {
+                                                    fileName: "src/components/InvoiceForm.jsx",
+                                                    lineNumber: 272,
+                                                    columnNumber: 17
+                                                }, undefined)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "src/components/InvoiceForm.jsx",
+                                            lineNumber: 270,
+                                            columnNumber: 15
+                                        }, undefined)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "src/components/InvoiceForm.jsx",
+                                    lineNumber: 250,
+                                    columnNumber: 13
+                                }, undefined),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("hr", {
+                                    className: "my-4"
+                                }, void 0, false, {
+                                    fileName: "src/components/InvoiceForm.jsx",
+                                    lineNumber: 283,
+                                    columnNumber: 13
+                                }, undefined),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _rowDefault.default), {
+                                    className: "mb-5",
+                                    children: [
+                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _colDefault.default), {
+                                            children: [
+                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Label, {
+                                                    className: "fw-bold",
+                                                    children: "Bill from:"
+                                                }, void 0, false, {
+                                                    fileName: "src/components/InvoiceForm.jsx",
+                                                    lineNumber: 286,
+                                                    columnNumber: 17
+                                                }, undefined),
+                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
+                                                    placeholder: "Who is this invoice from?",
+                                                    rows: 3,
+                                                    value: billFrom,
+                                                    type: "text",
+                                                    name: "billFrom",
+                                                    className: "my-2",
+                                                    onChange: handleChange(setBillFrom),
+                                                    autoComplete: "name",
+                                                    required: true
+                                                }, void 0, false, {
+                                                    fileName: "src/components/InvoiceForm.jsx",
+                                                    lineNumber: 287,
+                                                    columnNumber: 17
+                                                }, undefined),
+                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
+                                                    placeholder: "Email address",
+                                                    value: billFromEmail,
+                                                    type: "email",
+                                                    name: "billFromEmail",
+                                                    className: "my-2",
+                                                    onChange: handleChange(setBillFromEmail),
+                                                    autoComplete: "email",
+                                                    required: true
+                                                }, void 0, false, {
+                                                    fileName: "src/components/InvoiceForm.jsx",
+                                                    lineNumber: 298,
+                                                    columnNumber: 17
+                                                }, undefined),
+                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
+                                                    placeholder: "Billing address",
+                                                    value: billFromAddress,
+                                                    type: "text",
+                                                    name: "billFromAddress",
+                                                    className: "my-2",
+                                                    autoComplete: "address",
+                                                    onChange: handleChange(setBillFromAddress),
+                                                    required: true
+                                                }, void 0, false, {
+                                                    fileName: "src/components/InvoiceForm.jsx",
+                                                    lineNumber: 308,
+                                                    columnNumber: 17
+                                                }, undefined)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "src/components/InvoiceForm.jsx",
+                                            lineNumber: 285,
+                                            columnNumber: 15
+                                        }, undefined),
+                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _colDefault.default), {
+                                            children: [
+                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Label, {
+                                                    className: "fw-bold",
+                                                    children: "Bill to:"
+                                                }, void 0, false, {
+                                                    fileName: "src/components/InvoiceForm.jsx",
+                                                    lineNumber: 320,
+                                                    columnNumber: 17
+                                                }, undefined),
+                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
+                                                    placeholder: "Who is this invoice to?",
+                                                    rows: 3,
+                                                    value: billTo,
+                                                    type: "text",
+                                                    name: "billTo",
+                                                    className: "my-2",
+                                                    onChange: handleChange(setBillTo),
+                                                    autoComplete: "name",
+                                                    required: true
+                                                }, void 0, false, {
+                                                    fileName: "src/components/InvoiceForm.jsx",
+                                                    lineNumber: 321,
+                                                    columnNumber: 17
+                                                }, undefined),
+                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
+                                                    placeholder: "Email address",
+                                                    value: billToEmail,
+                                                    type: "email",
+                                                    name: "billToEmail",
+                                                    className: "my-2",
+                                                    onChange: handleChange(setBillToEmail),
+                                                    autoComplete: "email",
+                                                    required: true
+                                                }, void 0, false, {
+                                                    fileName: "src/components/InvoiceForm.jsx",
+                                                    lineNumber: 332,
+                                                    columnNumber: 17
+                                                }, undefined),
+                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
+                                                    placeholder: "Billing address",
+                                                    value: billToAddress,
+                                                    type: "text",
+                                                    name: "billToAddress",
+                                                    className: "my-2",
+                                                    autoComplete: "address",
+                                                    onChange: handleChange(setBillToAddress),
+                                                    required: true
+                                                }, void 0, false, {
+                                                    fileName: "src/components/InvoiceForm.jsx",
+                                                    lineNumber: 342,
+                                                    columnNumber: 17
+                                                }, undefined)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "src/components/InvoiceForm.jsx",
+                                            lineNumber: 319,
+                                            columnNumber: 15
+                                        }, undefined)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "src/components/InvoiceForm.jsx",
+                                    lineNumber: 284,
+                                    columnNumber: 13
+                                }, undefined),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _invoiceItemDefault.default), {
+                                    onItemizedItemEdit: onItemizedItemEdit,
+                                    onRowAdd: handleAddEvent,
+                                    onRowDel: handleRowDel,
+                                    currency: currency,
+                                    items: items
+                                }, void 0, false, {
+                                    fileName: "src/components/InvoiceForm.jsx",
+                                    lineNumber: 354,
+                                    columnNumber: 13
+                                }, undefined),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _rowDefault.default), {
+                                    className: "mt-4 justify-content-end",
+                                    children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _colDefault.default), {
+                                        lg: 6,
+                                        children: [
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                className: "d-flex flex-row align-items-center",
+                                                className: "d-flex flex-row align-items-start justify-content-between",
                                                 children: [
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                        className: "fw-bold d-block me-2",
-                                                        children: "Due\xa0Date:"
+                                                        className: "fw-bold",
+                                                        children: "Subtotal:"
                                                     }, void 0, false, {
                                                         fileName: "src/components/InvoiceForm.jsx",
-                                                        lineNumber: 224,
+                                                        lineNumber: 366,
                                                         columnNumber: 19
                                                     }, undefined),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
-                                                        type: "date",
-                                                        value: dateOfIssue,
-                                                        name: "dateOfIssue",
-                                                        onChange: handleChange(setDateOfIssue),
-                                                        style: {
-                                                            maxWidth: "150px"
-                                                        },
-                                                        required: true
-                                                    }, void 0, false, {
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        children: [
+                                                            currency,
+                                                            subTotal
+                                                        ]
+                                                    }, void 0, true, {
                                                         fileName: "src/components/InvoiceForm.jsx",
-                                                        lineNumber: 225,
+                                                        lineNumber: 367,
                                                         columnNumber: 19
                                                     }, undefined)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 223,
-                                                columnNumber: 17
-                                            }, undefined)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 216,
-                                        columnNumber: 15
-                                    }, undefined),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                        className: "d-flex flex-row align-items-center",
-                                        children: [
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                className: "fw-bold me-2",
-                                                children: "Invoice\xa0Number:\xa0"
-                                            }, void 0, false, {
-                                                fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 236,
+                                                lineNumber: 365,
                                                 columnNumber: 17
                                             }, undefined),
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
-                                                type: "number",
-                                                value: invoiceNumber,
-                                                name: "invoiceNumber",
-                                                onChange: handleChange(setInvoiceNumber),
-                                                min: "1",
+                                            parseFloat(discountAmount) > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                className: "d-flex flex-row align-items-start justify-content-between mt-2",
+                                                children: [
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        className: "fw-bold",
+                                                        children: "Discount:"
+                                                    }, void 0, false, {
+                                                        fileName: "src/components/InvoiceForm.jsx",
+                                                        lineNumber: 375,
+                                                        columnNumber: 21
+                                                    }, undefined),
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        children: [
+                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                className: "small",
+                                                                children: [
+                                                                    "(",
+                                                                    discountRate || 0,
+                                                                    "%)"
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "src/components/InvoiceForm.jsx",
+                                                                lineNumber: 377,
+                                                                columnNumber: 23
+                                                            }, undefined),
+                                                            " -",
+                                                            currency,
+                                                            discountAmount
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "src/components/InvoiceForm.jsx",
+                                                        lineNumber: 376,
+                                                        columnNumber: 21
+                                                    }, undefined)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "src/components/InvoiceForm.jsx",
+                                                lineNumber: 374,
+                                                columnNumber: 19
+                                            }, undefined),
+                                            gstType === "intra" && parseFloat(taxRate) > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
+                                                children: [
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                        className: "d-flex flex-row align-items-start justify-content-between mt-2",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                className: "fw-bold text-success",
+                                                                children: "CGST:"
+                                                            }, void 0, false, {
+                                                                fileName: "src/components/InvoiceForm.jsx",
+                                                                lineNumber: 387,
+                                                                columnNumber: 23
+                                                            }, undefined),
+                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                children: [
+                                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                        className: "small",
+                                                                        children: [
+                                                                            "(",
+                                                                            (parseFloat(taxRate) / 2).toFixed(1),
+                                                                            "%)"
+                                                                        ]
+                                                                    }, void 0, true, {
+                                                                        fileName: "src/components/InvoiceForm.jsx",
+                                                                        lineNumber: 389,
+                                                                        columnNumber: 25
+                                                                    }, undefined),
+                                                                    " ",
+                                                                    currency,
+                                                                    cgst
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "src/components/InvoiceForm.jsx",
+                                                                lineNumber: 388,
+                                                                columnNumber: 23
+                                                            }, undefined)
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "src/components/InvoiceForm.jsx",
+                                                        lineNumber: 386,
+                                                        columnNumber: 21
+                                                    }, undefined),
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                        className: "d-flex flex-row align-items-start justify-content-between mt-2",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                className: "fw-bold text-success",
+                                                                children: "SGST:"
+                                                            }, void 0, false, {
+                                                                fileName: "src/components/InvoiceForm.jsx",
+                                                                lineNumber: 394,
+                                                                columnNumber: 23
+                                                            }, undefined),
+                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                children: [
+                                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                        className: "small",
+                                                                        children: [
+                                                                            "(",
+                                                                            (parseFloat(taxRate) / 2).toFixed(1),
+                                                                            "%)"
+                                                                        ]
+                                                                    }, void 0, true, {
+                                                                        fileName: "src/components/InvoiceForm.jsx",
+                                                                        lineNumber: 396,
+                                                                        columnNumber: 25
+                                                                    }, undefined),
+                                                                    " ",
+                                                                    currency,
+                                                                    sgst
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "src/components/InvoiceForm.jsx",
+                                                                lineNumber: 395,
+                                                                columnNumber: 23
+                                                            }, undefined)
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "src/components/InvoiceForm.jsx",
+                                                        lineNumber: 393,
+                                                        columnNumber: 21
+                                                    }, undefined)
+                                                ]
+                                            }, void 0, true),
+                                            gstType === "inter" && parseFloat(taxRate) > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                className: "d-flex flex-row align-items-start justify-content-between mt-2",
+                                                children: [
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        className: "fw-bold text-primary",
+                                                        children: "IGST:"
+                                                    }, void 0, false, {
+                                                        fileName: "src/components/InvoiceForm.jsx",
+                                                        lineNumber: 405,
+                                                        columnNumber: 21
+                                                    }, undefined),
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        children: [
+                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                className: "small",
+                                                                children: [
+                                                                    "(",
+                                                                    taxRate,
+                                                                    "%)"
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "src/components/InvoiceForm.jsx",
+                                                                lineNumber: 407,
+                                                                columnNumber: 23
+                                                            }, undefined),
+                                                            " ",
+                                                            currency,
+                                                            igst
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "src/components/InvoiceForm.jsx",
+                                                        lineNumber: 406,
+                                                        columnNumber: 21
+                                                    }, undefined)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "src/components/InvoiceForm.jsx",
+                                                lineNumber: 404,
+                                                columnNumber: 19
+                                            }, undefined),
+                                            gstType === "none" && parseFloat(taxAmount) > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                className: "d-flex flex-row align-items-start justify-content-between mt-2",
+                                                children: [
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        className: "fw-bold",
+                                                        children: "Tax:"
+                                                    }, void 0, false, {
+                                                        fileName: "src/components/InvoiceForm.jsx",
+                                                        lineNumber: 414,
+                                                        columnNumber: 21
+                                                    }, undefined),
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        children: [
+                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                className: "small",
+                                                                children: [
+                                                                    "(",
+                                                                    taxRate || 0,
+                                                                    "%)"
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "src/components/InvoiceForm.jsx",
+                                                                lineNumber: 416,
+                                                                columnNumber: 23
+                                                            }, undefined),
+                                                            " ",
+                                                            currency,
+                                                            taxAmount
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "src/components/InvoiceForm.jsx",
+                                                        lineNumber: 415,
+                                                        columnNumber: 21
+                                                    }, undefined)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "src/components/InvoiceForm.jsx",
+                                                lineNumber: 413,
+                                                columnNumber: 19
+                                            }, undefined),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("hr", {}, void 0, false, {
+                                                fileName: "src/components/InvoiceForm.jsx",
+                                                lineNumber: 422,
+                                                columnNumber: 17
+                                            }, undefined),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                className: "d-flex flex-row align-items-start justify-content-between",
                                                 style: {
-                                                    maxWidth: "70px"
+                                                    fontSize: "1.125rem"
                                                 },
-                                                required: true
-                                            }, void 0, false, {
+                                                children: [
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        className: "fw-bold",
+                                                        children: "Total:"
+                                                    }, void 0, false, {
+                                                        fileName: "src/components/InvoiceForm.jsx",
+                                                        lineNumber: 427,
+                                                        columnNumber: 19
+                                                    }, undefined),
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        className: "fw-bold",
+                                                        children: [
+                                                            currency,
+                                                            total || 0
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "src/components/InvoiceForm.jsx",
+                                                        lineNumber: 428,
+                                                        columnNumber: 19
+                                                    }, undefined)
+                                                ]
+                                            }, void 0, true, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 237,
+                                                lineNumber: 423,
                                                 columnNumber: 17
                                             }, undefined)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 235,
+                                        lineNumber: 364,
                                         columnNumber: 15
                                     }, undefined)
-                                ]
-                            }, void 0, true, {
-                                fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 215,
-                                columnNumber: 13
-                            }, undefined),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("hr", {
-                                className: "my-4"
-                            }, void 0, false, {
-                                fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 248,
-                                columnNumber: 13
-                            }, undefined),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _rowDefault.default), {
-                                className: "mb-5",
-                                children: [
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _colDefault.default), {
-                                        children: [
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Label, {
-                                                className: "fw-bold",
-                                                children: "Bill from:"
-                                            }, void 0, false, {
-                                                fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 251,
-                                                columnNumber: 17
-                                            }, undefined),
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
-                                                placeholder: "Who is this invoice from?",
-                                                rows: 3,
-                                                value: billFrom,
-                                                type: "text",
-                                                name: "billFrom",
-                                                className: "my-2",
-                                                onChange: handleChange(setBillFrom),
-                                                autoComplete: "name",
-                                                required: true
-                                            }, void 0, false, {
-                                                fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 252,
-                                                columnNumber: 17
-                                            }, undefined),
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
-                                                placeholder: "Email address",
-                                                value: billFromEmail,
-                                                type: "email",
-                                                name: "billFromEmail",
-                                                className: "my-2",
-                                                onChange: handleChange(setBillFromEmail),
-                                                autoComplete: "email",
-                                                required: true
-                                            }, void 0, false, {
-                                                fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 263,
-                                                columnNumber: 17
-                                            }, undefined),
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
-                                                placeholder: "Billing address",
-                                                value: billFromAddress,
-                                                type: "text",
-                                                name: "billFromAddress",
-                                                className: "my-2",
-                                                autoComplete: "address",
-                                                onChange: handleChange(setBillFromAddress),
-                                                required: true
-                                            }, void 0, false, {
-                                                fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 273,
-                                                columnNumber: 17
-                                            }, undefined)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 250,
-                                        columnNumber: 15
-                                    }, undefined),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _colDefault.default), {
-                                        children: [
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Label, {
-                                                className: "fw-bold",
-                                                children: "Bill to:"
-                                            }, void 0, false, {
-                                                fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 285,
-                                                columnNumber: 17
-                                            }, undefined),
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
-                                                placeholder: "Who is this invoice to?",
-                                                rows: 3,
-                                                value: billTo,
-                                                type: "text",
-                                                name: "billTo",
-                                                className: "my-2",
-                                                onChange: handleChange(setBillTo),
-                                                autoComplete: "name",
-                                                required: true
-                                            }, void 0, false, {
-                                                fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 286,
-                                                columnNumber: 17
-                                            }, undefined),
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
-                                                placeholder: "Email address",
-                                                value: billToEmail,
-                                                type: "email",
-                                                name: "billToEmail",
-                                                className: "my-2",
-                                                onChange: handleChange(setBillToEmail),
-                                                autoComplete: "email",
-                                                required: true
-                                            }, void 0, false, {
-                                                fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 297,
-                                                columnNumber: 17
-                                            }, undefined),
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
-                                                placeholder: "Billing address",
-                                                value: billToAddress,
-                                                type: "text",
-                                                name: "billToAddress",
-                                                className: "my-2",
-                                                autoComplete: "address",
-                                                onChange: handleChange(setBillToAddress),
-                                                required: true
-                                            }, void 0, false, {
-                                                fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 307,
-                                                columnNumber: 17
-                                            }, undefined)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 284,
-                                        columnNumber: 15
-                                    }, undefined)
-                                ]
-                            }, void 0, true, {
-                                fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 249,
-                                columnNumber: 13
-                            }, undefined),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _invoiceItemDefault.default), {
-                                onItemizedItemEdit: onItemizedItemEdit,
-                                onRowAdd: handleAddEvent,
-                                onRowDel: handleRowDel,
-                                currency: currency,
-                                items: items
-                            }, void 0, false, {
-                                fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 319,
-                                columnNumber: 13
-                            }, undefined),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _rowDefault.default), {
-                                className: "mt-4 justify-content-end",
-                                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _colDefault.default), {
-                                    lg: 6,
-                                    children: [
-                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                            className: "d-flex flex-row align-items-start justify-content-between",
-                                            children: [
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                    className: "fw-bold",
-                                                    children: "Subtotal:"
-                                                }, void 0, false, {
-                                                    fileName: "src/components/InvoiceForm.jsx",
-                                                    lineNumber: 331,
-                                                    columnNumber: 19
-                                                }, undefined),
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                    children: [
-                                                        currency,
-                                                        subTotal
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "src/components/InvoiceForm.jsx",
-                                                    lineNumber: 332,
-                                                    columnNumber: 19
-                                                }, undefined)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "src/components/InvoiceForm.jsx",
-                                            lineNumber: 330,
-                                            columnNumber: 17
-                                        }, undefined),
-                                        parseFloat(discountAmount) > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                            className: "d-flex flex-row align-items-start justify-content-between mt-2",
-                                            children: [
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                    className: "fw-bold",
-                                                    children: "Discount:"
-                                                }, void 0, false, {
-                                                    fileName: "src/components/InvoiceForm.jsx",
-                                                    lineNumber: 340,
-                                                    columnNumber: 21
-                                                }, undefined),
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                    children: [
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                            className: "small",
-                                                            children: [
-                                                                "(",
-                                                                discountRate || 0,
-                                                                "%)"
-                                                            ]
-                                                        }, void 0, true, {
-                                                            fileName: "src/components/InvoiceForm.jsx",
-                                                            lineNumber: 342,
-                                                            columnNumber: 23
-                                                        }, undefined),
-                                                        " -",
-                                                        currency,
-                                                        discountAmount
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "src/components/InvoiceForm.jsx",
-                                                    lineNumber: 341,
-                                                    columnNumber: 21
-                                                }, undefined)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "src/components/InvoiceForm.jsx",
-                                            lineNumber: 339,
-                                            columnNumber: 19
-                                        }, undefined),
-                                        gstType === "intra" && parseFloat(taxRate) > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
-                                            children: [
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                    className: "d-flex flex-row align-items-start justify-content-between mt-2",
-                                                    children: [
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                            className: "fw-bold text-success",
-                                                            children: "CGST:"
-                                                        }, void 0, false, {
-                                                            fileName: "src/components/InvoiceForm.jsx",
-                                                            lineNumber: 352,
-                                                            columnNumber: 23
-                                                        }, undefined),
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                            children: [
-                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                    className: "small",
-                                                                    children: [
-                                                                        "(",
-                                                                        (parseFloat(taxRate) / 2).toFixed(1),
-                                                                        "%)"
-                                                                    ]
-                                                                }, void 0, true, {
-                                                                    fileName: "src/components/InvoiceForm.jsx",
-                                                                    lineNumber: 354,
-                                                                    columnNumber: 25
-                                                                }, undefined),
-                                                                " ",
-                                                                currency,
-                                                                cgst
-                                                            ]
-                                                        }, void 0, true, {
-                                                            fileName: "src/components/InvoiceForm.jsx",
-                                                            lineNumber: 353,
-                                                            columnNumber: 23
-                                                        }, undefined)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "src/components/InvoiceForm.jsx",
-                                                    lineNumber: 351,
-                                                    columnNumber: 21
-                                                }, undefined),
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                    className: "d-flex flex-row align-items-start justify-content-between mt-2",
-                                                    children: [
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                            className: "fw-bold text-success",
-                                                            children: "SGST:"
-                                                        }, void 0, false, {
-                                                            fileName: "src/components/InvoiceForm.jsx",
-                                                            lineNumber: 359,
-                                                            columnNumber: 23
-                                                        }, undefined),
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                            children: [
-                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                    className: "small",
-                                                                    children: [
-                                                                        "(",
-                                                                        (parseFloat(taxRate) / 2).toFixed(1),
-                                                                        "%)"
-                                                                    ]
-                                                                }, void 0, true, {
-                                                                    fileName: "src/components/InvoiceForm.jsx",
-                                                                    lineNumber: 361,
-                                                                    columnNumber: 25
-                                                                }, undefined),
-                                                                " ",
-                                                                currency,
-                                                                sgst
-                                                            ]
-                                                        }, void 0, true, {
-                                                            fileName: "src/components/InvoiceForm.jsx",
-                                                            lineNumber: 360,
-                                                            columnNumber: 23
-                                                        }, undefined)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "src/components/InvoiceForm.jsx",
-                                                    lineNumber: 358,
-                                                    columnNumber: 21
-                                                }, undefined)
-                                            ]
-                                        }, void 0, true),
-                                        gstType === "inter" && parseFloat(taxRate) > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                            className: "d-flex flex-row align-items-start justify-content-between mt-2",
-                                            children: [
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                    className: "fw-bold text-primary",
-                                                    children: "IGST:"
-                                                }, void 0, false, {
-                                                    fileName: "src/components/InvoiceForm.jsx",
-                                                    lineNumber: 370,
-                                                    columnNumber: 21
-                                                }, undefined),
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                    children: [
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                            className: "small",
-                                                            children: [
-                                                                "(",
-                                                                taxRate,
-                                                                "%)"
-                                                            ]
-                                                        }, void 0, true, {
-                                                            fileName: "src/components/InvoiceForm.jsx",
-                                                            lineNumber: 372,
-                                                            columnNumber: 23
-                                                        }, undefined),
-                                                        " ",
-                                                        currency,
-                                                        igst
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "src/components/InvoiceForm.jsx",
-                                                    lineNumber: 371,
-                                                    columnNumber: 21
-                                                }, undefined)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "src/components/InvoiceForm.jsx",
-                                            lineNumber: 369,
-                                            columnNumber: 19
-                                        }, undefined),
-                                        gstType === "none" && parseFloat(taxAmount) > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                            className: "d-flex flex-row align-items-start justify-content-between mt-2",
-                                            children: [
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                    className: "fw-bold",
-                                                    children: "Tax:"
-                                                }, void 0, false, {
-                                                    fileName: "src/components/InvoiceForm.jsx",
-                                                    lineNumber: 379,
-                                                    columnNumber: 21
-                                                }, undefined),
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                    children: [
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                            className: "small",
-                                                            children: [
-                                                                "(",
-                                                                taxRate || 0,
-                                                                "%)"
-                                                            ]
-                                                        }, void 0, true, {
-                                                            fileName: "src/components/InvoiceForm.jsx",
-                                                            lineNumber: 381,
-                                                            columnNumber: 23
-                                                        }, undefined),
-                                                        " ",
-                                                        currency,
-                                                        taxAmount
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "src/components/InvoiceForm.jsx",
-                                                    lineNumber: 380,
-                                                    columnNumber: 21
-                                                }, undefined)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "src/components/InvoiceForm.jsx",
-                                            lineNumber: 378,
-                                            columnNumber: 19
-                                        }, undefined),
-                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("hr", {}, void 0, false, {
-                                            fileName: "src/components/InvoiceForm.jsx",
-                                            lineNumber: 387,
-                                            columnNumber: 17
-                                        }, undefined),
-                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                            className: "d-flex flex-row align-items-start justify-content-between",
-                                            style: {
-                                                fontSize: "1.125rem"
-                                            },
-                                            children: [
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                    className: "fw-bold",
-                                                    children: "Total:"
-                                                }, void 0, false, {
-                                                    fileName: "src/components/InvoiceForm.jsx",
-                                                    lineNumber: 392,
-                                                    columnNumber: 19
-                                                }, undefined),
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                    className: "fw-bold",
-                                                    children: [
-                                                        currency,
-                                                        total || 0
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "src/components/InvoiceForm.jsx",
-                                                    lineNumber: 393,
-                                                    columnNumber: 19
-                                                }, undefined)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "src/components/InvoiceForm.jsx",
-                                            lineNumber: 388,
-                                            columnNumber: 17
-                                        }, undefined)
-                                    ]
-                                }, void 0, true, {
+                                }, void 0, false, {
                                     fileName: "src/components/InvoiceForm.jsx",
-                                    lineNumber: 329,
-                                    columnNumber: 15
+                                    lineNumber: 363,
+                                    columnNumber: 13
+                                }, undefined),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("hr", {
+                                    className: "my-4"
+                                }, void 0, false, {
+                                    fileName: "src/components/InvoiceForm.jsx",
+                                    lineNumber: 435,
+                                    columnNumber: 13
+                                }, undefined),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Label, {
+                                    className: "fw-bold",
+                                    children: "Notes:"
+                                }, void 0, false, {
+                                    fileName: "src/components/InvoiceForm.jsx",
+                                    lineNumber: 436,
+                                    columnNumber: 13
+                                }, undefined),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
+                                    placeholder: "Thank you for doing business with us. Have a great day!",
+                                    name: "notes",
+                                    value: notes,
+                                    onChange: handleChange(setNotes),
+                                    as: "textarea",
+                                    className: "my-2",
+                                    rows: 1
+                                }, void 0, false, {
+                                    fileName: "src/components/InvoiceForm.jsx",
+                                    lineNumber: 437,
+                                    columnNumber: 13
                                 }, undefined)
-                            }, void 0, false, {
-                                fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 328,
-                                columnNumber: 13
-                            }, undefined),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("hr", {
-                                className: "my-4"
-                            }, void 0, false, {
-                                fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 400,
-                                columnNumber: 13
-                            }, undefined),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Label, {
-                                className: "fw-bold",
-                                children: "Notes:"
-                            }, void 0, false, {
-                                fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 401,
-                                columnNumber: 13
-                            }, undefined),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Control, {
-                                placeholder: "Thank you for doing business with us. Have a great day!",
-                                name: "notes",
-                                value: notes,
-                                onChange: handleChange(setNotes),
-                                as: "textarea",
-                                className: "my-2",
-                                rows: 1
-                            }, void 0, false, {
-                                fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 402,
-                                columnNumber: 13
-                            }, undefined)
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/components/InvoiceForm.jsx",
-                        lineNumber: 214,
-                        columnNumber: 11
-                    }, undefined)
-                }, void 0, false, {
+                            ]
+                        }, void 0, true, {
+                            fileName: "src/components/InvoiceForm.jsx",
+                            lineNumber: 249,
+                            columnNumber: 11
+                        }, undefined)
+                    ]
+                }, void 0, true, {
                     fileName: "src/components/InvoiceForm.jsx",
-                    lineNumber: 213,
+                    lineNumber: 245,
                     columnNumber: 9
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _colDefault.default), {
@@ -36041,7 +36078,7 @@ const InvoiceForm = ()=>{
                                 igst: igst
                             }, void 0, false, {
                                 fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 415,
+                                lineNumber: 450,
                                 columnNumber: 13
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Group, {
@@ -36052,7 +36089,7 @@ const InvoiceForm = ()=>{
                                         children: "Status:"
                                     }, void 0, false, {
                                         fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 444,
+                                        lineNumber: 479,
                                         columnNumber: 15
                                     }, undefined),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Select, {
@@ -36065,7 +36102,7 @@ const InvoiceForm = ()=>{
                                                 children: "Draft"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 450,
+                                                lineNumber: 485,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -36073,7 +36110,7 @@ const InvoiceForm = ()=>{
                                                 children: "Sent"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 451,
+                                                lineNumber: 486,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -36081,7 +36118,7 @@ const InvoiceForm = ()=>{
                                                 children: "Paid"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 452,
+                                                lineNumber: 487,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -36089,19 +36126,19 @@ const InvoiceForm = ()=>{
                                                 children: "Overdue"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 453,
+                                                lineNumber: 488,
                                                 columnNumber: 17
                                             }, undefined)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 445,
+                                        lineNumber: 480,
                                         columnNumber: 15
                                     }, undefined)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 443,
+                                lineNumber: 478,
                                 columnNumber: 13
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Group, {
@@ -36112,7 +36149,7 @@ const InvoiceForm = ()=>{
                                         children: "Currency:"
                                     }, void 0, false, {
                                         fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 458,
+                                        lineNumber: 493,
                                         columnNumber: 15
                                     }, undefined),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Select, {
@@ -36127,7 +36164,7 @@ const InvoiceForm = ()=>{
                                                 children: "USD (United States Dollar)"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 466,
+                                                lineNumber: 501,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -36135,7 +36172,7 @@ const InvoiceForm = ()=>{
                                                 children: "GBP (British Pound Sterling)"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 467,
+                                                lineNumber: 502,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -36143,7 +36180,7 @@ const InvoiceForm = ()=>{
                                                 children: "INR (Indian Rupee)"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 468,
+                                                lineNumber: 503,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -36151,7 +36188,7 @@ const InvoiceForm = ()=>{
                                                 children: "JPY (Japanese Yen)"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 469,
+                                                lineNumber: 504,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -36159,7 +36196,7 @@ const InvoiceForm = ()=>{
                                                 children: "CAD (Canadian Dollar)"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 470,
+                                                lineNumber: 505,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -36167,7 +36204,7 @@ const InvoiceForm = ()=>{
                                                 children: "AUD (Australian Dollar)"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 471,
+                                                lineNumber: 506,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -36175,7 +36212,7 @@ const InvoiceForm = ()=>{
                                                 children: "SGD (Singapore Dollar)"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 472,
+                                                lineNumber: 507,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -36183,7 +36220,7 @@ const InvoiceForm = ()=>{
                                                 children: "CNY (Chinese Renminbi)"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 473,
+                                                lineNumber: 508,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -36191,19 +36228,19 @@ const InvoiceForm = ()=>{
                                                 children: "BTC (Bitcoin)"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 474,
+                                                lineNumber: 509,
                                                 columnNumber: 17
                                             }, undefined)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 459,
+                                        lineNumber: 494,
                                         columnNumber: 15
                                     }, undefined)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 457,
+                                lineNumber: 492,
                                 columnNumber: 13
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Group, {
@@ -36214,7 +36251,7 @@ const InvoiceForm = ()=>{
                                         children: "GST Type:"
                                     }, void 0, false, {
                                         fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 480,
+                                        lineNumber: 515,
                                         columnNumber: 15
                                     }, undefined),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Select, {
@@ -36227,7 +36264,7 @@ const InvoiceForm = ()=>{
                                                 children: "No GST"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 486,
+                                                lineNumber: 521,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -36235,7 +36272,7 @@ const InvoiceForm = ()=>{
                                                 children: "Intra-State (CGST + SGST)"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 487,
+                                                lineNumber: 522,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -36243,19 +36280,19 @@ const InvoiceForm = ()=>{
                                                 children: "Inter-State (IGST)"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 488,
+                                                lineNumber: 523,
                                                 columnNumber: 17
                                             }, undefined)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 481,
+                                        lineNumber: 516,
                                         columnNumber: 15
                                     }, undefined)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 479,
+                                lineNumber: 514,
                                 columnNumber: 13
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Group, {
@@ -36266,7 +36303,7 @@ const InvoiceForm = ()=>{
                                         children: gstType === "none" ? "Tax rate:" : "GST rate:"
                                     }, void 0, false, {
                                         fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 494,
+                                        lineNumber: 529,
                                         columnNumber: 15
                                     }, undefined),
                                     gstType !== "none" && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -36285,12 +36322,12 @@ const InvoiceForm = ()=>{
                                                 ]
                                             }, slab, true, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 500,
+                                                lineNumber: 535,
                                                 columnNumber: 21
                                             }, undefined))
                                     }, void 0, false, {
                                         fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 498,
+                                        lineNumber: 533,
                                         columnNumber: 17
                                     }, undefined),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _inputGroupDefault.default), {
@@ -36308,7 +36345,7 @@ const InvoiceForm = ()=>{
                                                 max: "100.00"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 517,
+                                                lineNumber: 552,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _inputGroupDefault.default).Text, {
@@ -36316,13 +36353,13 @@ const InvoiceForm = ()=>{
                                                 children: "%"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 528,
+                                                lineNumber: 563,
                                                 columnNumber: 17
                                             }, undefined)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 516,
+                                        lineNumber: 551,
                                         columnNumber: 15
                                     }, undefined),
                                     gstType === "intra" && parseFloat(taxRate) > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -36337,13 +36374,13 @@ const InvoiceForm = ()=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 533,
+                                        lineNumber: 568,
                                         columnNumber: 17
                                     }, undefined)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 493,
+                                lineNumber: 528,
                                 columnNumber: 13
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formDefault.default).Group, {
@@ -36354,7 +36391,7 @@ const InvoiceForm = ()=>{
                                         children: "Discount rate:"
                                     }, void 0, false, {
                                         fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 541,
+                                        lineNumber: 576,
                                         columnNumber: 15
                                     }, undefined),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _inputGroupDefault.default), {
@@ -36372,7 +36409,7 @@ const InvoiceForm = ()=>{
                                                 max: "100.00"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 543,
+                                                lineNumber: 578,
                                                 columnNumber: 17
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _inputGroupDefault.default).Text, {
@@ -36380,26 +36417,26 @@ const InvoiceForm = ()=>{
                                                 children: "%"
                                             }, void 0, false, {
                                                 fileName: "src/components/InvoiceForm.jsx",
-                                                lineNumber: 554,
+                                                lineNumber: 589,
                                                 columnNumber: 17
                                             }, undefined)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/components/InvoiceForm.jsx",
-                                        lineNumber: 542,
+                                        lineNumber: 577,
                                         columnNumber: 15
                                     }, undefined)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 540,
+                                lineNumber: 575,
                                 columnNumber: 13
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("hr", {
                                 className: "mt-4 mb-3"
                             }, void 0, false, {
                                 fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 559,
+                                lineNumber: 594,
                                 columnNumber: 13
                             }, undefined),
                             saveError && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _alertDefault.default), {
@@ -36409,7 +36446,7 @@ const InvoiceForm = ()=>{
                                 children: saveError
                             }, void 0, false, {
                                 fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 563,
+                                lineNumber: 598,
                                 columnNumber: 15
                             }, undefined),
                             saveSuccess && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _alertDefault.default), {
@@ -36419,7 +36456,7 @@ const InvoiceForm = ()=>{
                                 children: "Invoice saved successfully!"
                             }, void 0, false, {
                                 fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 568,
+                                lineNumber: 603,
                                 columnNumber: 15
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _buttonDefault.default), {
@@ -36430,7 +36467,7 @@ const InvoiceForm = ()=>{
                                 children: saving ? "Saving..." : invoiceId ? "Update Invoice" : "Save Invoice"
                             }, void 0, false, {
                                 fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 574,
+                                lineNumber: 609,
                                 columnNumber: 13
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _buttonDefault.default), {
@@ -36440,7 +36477,7 @@ const InvoiceForm = ()=>{
                                 children: "Review Invoice"
                             }, void 0, false, {
                                 fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 587,
+                                lineNumber: 622,
                                 columnNumber: 13
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _buttonDefault.default), {
@@ -36450,29 +36487,29 @@ const InvoiceForm = ()=>{
                                 children: "Back to Dashboard"
                             }, void 0, false, {
                                 fileName: "src/components/InvoiceForm.jsx",
-                                lineNumber: 595,
+                                lineNumber: 630,
                                 columnNumber: 13
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/components/InvoiceForm.jsx",
-                        lineNumber: 414,
+                        lineNumber: 449,
                         columnNumber: 11
                     }, undefined)
                 }, void 0, false, {
                     fileName: "src/components/InvoiceForm.jsx",
-                    lineNumber: 413,
+                    lineNumber: 448,
                     columnNumber: 9
                 }, undefined)
             ]
         }, void 0, true, {
             fileName: "src/components/InvoiceForm.jsx",
-            lineNumber: 212,
+            lineNumber: 244,
             columnNumber: 7
         }, undefined)
     }, void 0, false, {
         fileName: "src/components/InvoiceForm.jsx",
-        lineNumber: 211,
+        lineNumber: 243,
         columnNumber: 5
     }, undefined);
 };
@@ -36493,7 +36530,7 @@ $RefreshReg$(_c, "InvoiceForm");
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","bootstrap/dist/css/bootstrap.min.css":"i5LP7","react-bootstrap/Row":"2DPD4","react-bootstrap/Col":"6x0qd","react-bootstrap/Button":"kNKIo","react-bootstrap/Form":"6LPqw","react-bootstrap/Card":"56ajS","react-bootstrap/Alert":"aR4Gi","./InvoiceItem":"eMbZ4","./InvoiceModal":"4gGrI","react-bootstrap/InputGroup":"jh59p","react-router-dom":"61z4w","../hooks/useUpsertInvoice":"kkWnm","../supabaseClient":"20Hh5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi","../utils/gstCalculator":"9BzQx"}],"i5LP7":[function() {},{}],"eMbZ4":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","bootstrap/dist/css/bootstrap.min.css":"i5LP7","react-bootstrap/Row":"2DPD4","react-bootstrap/Col":"6x0qd","react-bootstrap/Button":"kNKIo","react-bootstrap/Form":"6LPqw","react-bootstrap/Card":"56ajS","react-bootstrap/Alert":"aR4Gi","./InvoiceItem":"eMbZ4","./InvoiceModal":"4gGrI","react-bootstrap/InputGroup":"jh59p","react-router-dom":"61z4w","../hooks/useUpsertInvoice":"kkWnm","../supabaseClient":"20Hh5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi","../utils/gstCalculator":"9BzQx","./AIPrompt":"hcxUs"}],"i5LP7":[function() {},{}],"eMbZ4":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$3ede = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 $parcel$ReactRefreshHelpers$3ede.init();
 var prevRefreshReg = globalThis.$RefreshReg$;
@@ -135969,7 +136006,168 @@ const getGSTLabel = (gstType)=>{
     }
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"l8g1u":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"hcxUs":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$b547 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$b547.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$b547.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _aipromptCss = require("./AIPrompt.css");
+var _s = $RefreshSig$();
+const AI_SERVER = "http://localhost:3001";
+const AIPrompt = ({ onAutoFill })=>{
+    _s();
+    const [prompt, setPrompt] = (0, _react.useState)("");
+    const [loading, setLoading] = (0, _react.useState)(false);
+    const [feedback, setFeedback] = (0, _react.useState)(null); // { type: "success"|"error", msg }
+    const handleGenerate = async ()=>{
+        if (!prompt.trim()) return;
+        setLoading(true);
+        setFeedback(null);
+        try {
+            const res = await fetch(`${AI_SERVER}/api/ai-invoice`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    prompt
+                })
+            });
+            const result = await res.json();
+            if (!res.ok || !result.success) throw new Error(result.error || "AI generation failed.");
+            // Pass the parsed data up to InvoiceForm
+            onAutoFill(result.data);
+            setFeedback({
+                type: "success",
+                msg: `\u{2713} Auto-filled ${result.data.items?.length || 0} item(s) from your prompt.`
+            });
+            setPrompt("");
+        } catch (err) {
+            setFeedback({
+                type: "error",
+                msg: err.message || "Something went wrong. Try again."
+            });
+        } finally{
+            setLoading(false);
+        }
+    };
+    const handleKeyDown = (e)=>{
+        if (e.key === "Enter" && !loading) {
+            e.preventDefault();
+            handleGenerate();
+        }
+    };
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "ai-prompt-wrapper",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "ai-label",
+                children: [
+                    "AI Auto-Fill ",
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                        className: "ai-badge",
+                        children: "BETA"
+                    }, void 0, false, {
+                        fileName: "src/components/AIPrompt.jsx",
+                        lineNumber: 58,
+                        columnNumber: 22
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/AIPrompt.jsx",
+                lineNumber: 57,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "ai-prompt-bar",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                        className: "ai-prompt-icon",
+                        children: "\u2728"
+                    }, void 0, false, {
+                        fileName: "src/components/AIPrompt.jsx",
+                        lineNumber: 61,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                        className: "ai-prompt-input",
+                        type: "text",
+                        placeholder: 'e.g. "Invoice for 3 web designs at \u20B915000 each with 18% GST"',
+                        value: prompt,
+                        onChange: (e)=>setPrompt(e.target.value),
+                        onKeyDown: handleKeyDown,
+                        disabled: loading
+                    }, void 0, false, {
+                        fileName: "src/components/AIPrompt.jsx",
+                        lineNumber: 62,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                        className: "ai-prompt-btn",
+                        onClick: handleGenerate,
+                        disabled: loading || !prompt.trim(),
+                        children: loading ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                            children: [
+                                "Generating",
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                    className: "ai-loading-dots"
+                                }, void 0, false, {
+                                    fileName: "src/components/AIPrompt.jsx",
+                                    lineNumber: 78,
+                                    columnNumber: 25
+                                }, undefined)
+                            ]
+                        }, void 0, true, {
+                            fileName: "src/components/AIPrompt.jsx",
+                            lineNumber: 77,
+                            columnNumber: 13
+                        }, undefined) : "Generate"
+                    }, void 0, false, {
+                        fileName: "src/components/AIPrompt.jsx",
+                        lineNumber: 71,
+                        columnNumber: 9
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/AIPrompt.jsx",
+                lineNumber: 60,
+                columnNumber: 7
+            }, undefined),
+            feedback && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: `ai-feedback ${feedback.type}`,
+                children: feedback.msg
+            }, void 0, false, {
+                fileName: "src/components/AIPrompt.jsx",
+                lineNumber: 87,
+                columnNumber: 9
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/components/AIPrompt.jsx",
+        lineNumber: 56,
+        columnNumber: 5
+    }, undefined);
+};
+_s(AIPrompt, "ZHYkZfcPm1E37ktPKHSB87OUoDA=");
+_c = AIPrompt;
+exports.default = AIPrompt;
+var _c;
+$RefreshReg$(_c, "AIPrompt");
+
+  $parcel$ReactRefreshHelpers$b547.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","./AIPrompt.css":"6I5Nf","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"6I5Nf":[function() {},{}],"l8g1u":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$6f65 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 $parcel$ReactRefreshHelpers$6f65.init();
 var prevRefreshReg = globalThis.$RefreshReg$;

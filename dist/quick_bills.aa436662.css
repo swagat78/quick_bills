@@ -13402,6 +13402,159 @@ hr {
   user-select: none;
 }
 
+.ai-prompt-wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.ai-prompt-bar {
+  background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+  border-radius: 14px;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 6px 16px;
+  transition: all .3s;
+  display: flex;
+  box-shadow: 0 2px 10px #2d343626;
+}
+
+.ai-prompt-bar:focus-within {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px #2d34364d;
+}
+
+.ai-prompt-icon {
+  color: #fdcb6e;
+  flex-shrink: 0;
+  font-size: 1.2rem;
+  animation: 2s ease-in-out infinite pulse-glow;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: .7;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.ai-prompt-input {
+  color: #fff;
+  background: none;
+  border: none;
+  outline: none;
+  flex: 1;
+  padding: 10px 0;
+  font-family: Inter, sans-serif;
+  font-size: .9rem;
+}
+
+.ai-prompt-input::placeholder {
+  color: #fff6;
+}
+
+.ai-prompt-btn {
+  color: #2d3436;
+  letter-spacing: .5px;
+  cursor: pointer;
+  white-space: nowrap;
+  background: #fdcb6e;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: .82rem;
+  font-weight: 700;
+  transition: all .2s;
+}
+
+.ai-prompt-btn:hover {
+  background: #ffeaa7;
+  transform: scale(1.02);
+}
+
+.ai-prompt-btn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ai-loading-dots:after {
+  content: "";
+  animation: 1.5s steps(4, end) infinite dots;
+}
+
+@keyframes dots {
+  0% {
+    content: "";
+  }
+
+  25% {
+    content: ".";
+  }
+
+  50% {
+    content: "..";
+  }
+
+  75% {
+    content: "...";
+  }
+}
+
+.ai-feedback {
+  border-radius: 8px;
+  margin-top: 8px;
+  padding: 8px 14px;
+  font-size: .8rem;
+  animation: .3s fadeIn;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ai-feedback.error {
+  color: #d63031;
+  background: #d6303114;
+  border: 1px solid #d6303126;
+}
+
+.ai-feedback.success {
+  color: #00b894;
+  background: #00b89414;
+  border: 1px solid #00b89426;
+}
+
+.ai-label {
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #636e72;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: .75rem;
+  font-weight: 700;
+  display: flex;
+}
+
+.ai-badge {
+  color: #fff;
+  letter-spacing: .5px;
+  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-size: .65rem;
+}
+
 .auth-container {
   background: radial-gradient(circle at 0 0, #1a1a2e, #16213e);
   justify-content: center;
