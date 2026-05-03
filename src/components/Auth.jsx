@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
-import { Form, Button, Card, Alert, Container } from "react-bootstrap";
+import "./Auth.css";
 
 const Auth = () => {
   const [loading, setLoading] = useState(false);
@@ -21,7 +21,7 @@ const Auth = () => {
           password,
         });
         if (error) throw error;
-        alert("Check your email for the confirmation link!");
+        alert("Verification email sent! Check your inbox.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -37,40 +37,53 @@ const Auth = () => {
   };
 
   return (
-    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: "80vh" }}>
-      <Card style={{ maxWidth: "400px", width: "100%" }} className="p-4 shadow-sm">
-        <h2 className="text-center mb-4">{isSignUp ? "Create Account" : "Login to QuickBills"}</h2>
-        {error && <Alert variant="danger">{error}</Alert>}
-        <Form onSubmit={handleAuth}>
-          <Form.Group className="mb-3">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h2>QuickBills</h2>
+          <p>{isSignUp ? "Join our community today" : "Welcome back, please login"}</p>
+        </div>
+
+        {error && <div className="error-msg">{error}</div>}
+
+        <form onSubmit={handleAuth}>
+          <div className="form-group">
+            <label>Email Address</label>
+            <input
+              className="auth-input"
               type="email"
+              placeholder="name@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
+          </div>
+
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              className="auth-input"
               type="password"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-          </Form.Group>
-          <Button variant="primary" type="submit" className="w-100 mb-3" disabled={loading}>
-            {loading ? "Processing..." : isSignUp ? "Sign Up" : "Login"}
-          </Button>
-        </Form>
-        <div className="text-center">
-          <Button variant="link" onClick={() => setIsSignUp(!isSignUp)}>
-            {isSignUp ? "Already have an account? Login" : "Don't have an account? Sign Up"}
-          </Button>
+          </div>
+
+          <button className="auth-btn" type="submit" disabled={loading}>
+            {loading ? "Authenticating..." : isSignUp ? "Create Account" : "Sign In"}
+          </button>
+        </form>
+
+        <div className="auth-footer">
+          {isSignUp ? "Already have an account?" : "New to QuickBills?"}
+          <span className="auth-link" onClick={() => setIsSignUp(!isSignUp)}>
+            {isSignUp ? "Sign In" : "Create Account"}
+          </span>
         </div>
-      </Card>
-    </Container>
+      </div>
+    </div>
   );
 };
 

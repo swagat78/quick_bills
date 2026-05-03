@@ -9,7 +9,9 @@ import Alert from "react-bootstrap/Alert";
 import InvoiceItem from "./InvoiceItem";
 import InvoiceModal from "./InvoiceModal";
 import InputGroup from "react-bootstrap/InputGroup";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useUpsertInvoice } from "../hooks/useUpsertInvoice";
+import { supabase } from "../supabaseClient";
 
 const InvoiceForm = () => {
   // ── Supabase upsert hook ──
@@ -20,6 +22,8 @@ const InvoiceForm = () => {
     success: saveSuccess,
   } = useUpsertInvoice();
   const [invoiceId, setInvoiceId] = useState(null);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
   const [currency, setCurrency] = useState("$");
@@ -78,6 +82,43 @@ const InvoiceForm = () => {
   useEffect(() => {
     handleCalculateTotal();
   }, [handleCalculateTotal]);
+
+  useEffect(() => {
+    const id = searchParams.get("id");
+    if (id) {
+      loadInvoice(id);
+    }
+  }, [searchParams]);
+
+  const loadInvoice = async (id) => {
+    try {
+      const { data, error } = await supabase
+        .from("invoices")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) throw error;
+      if (data) {
+        setInvoiceId(data.id);
+        setInvoiceNumber(data.invoice_number);
+        setCurrency(data.currency);
+        setDateOfIssue(data.date_of_issue);
+        setBillTo(data.bill_to);
+        setBillToEmail(data.bill_to_email);
+        setBillToAddress(data.bill_to_address);
+        setBillFrom(data.bill_from);
+        setBillFromEmail(data.bill_from_email);
+        setBillFromAddress(data.bill_from_address);
+        setItems(data.line_items);
+        setTaxRate(data.tax_rate);
+        setDiscountRate(data.discount_rate);
+        setNotes(data.notes);
+      }
+    } catch (err) {
+      console.error("Error loading invoice:", err.message);
+    }
+  };
 
   const handleRowDel = (item) => {
     const updatedItems = items.filter((i) => i.id !== item.id);
@@ -431,9 +472,17 @@ const InvoiceForm = () => {
             <Button
               variant="primary"
               type="submit"
-              className="d-block w-100 btn-secondary"
+              className="d-block w-100 btn-secondary mb-2"
             >
               Review Invoice
+            </Button>
+
+            <Button
+              variant="outline-secondary"
+              className="d-block w-100"
+              onClick={() => navigate("/dashboard")}
+            >
+              Back to Dashboard
             </Button>
           </div>
         </Col>
