@@ -47,6 +47,7 @@ const InvoiceForm = () => {
   const [taxAmount, setTaxAmount] = useState("0.00");
   const [discountRate, setDiscountRate] = useState("");
   const [discountAmount, setDiscountAmount] = useState("0.00");
+  const [status, setStatus] = useState("draft");
 
   const [items, setItems] = useState([
     {
@@ -114,6 +115,7 @@ const InvoiceForm = () => {
         setTaxRate(data.tax_rate);
         setDiscountRate(data.discount_rate);
         setNotes(data.notes);
+        setStatus(data.status || "draft");
       }
     } catch (err) {
       console.error("Error loading invoice:", err.message);
@@ -183,6 +185,7 @@ const InvoiceForm = () => {
       subTotal,
       total,
       notes,
+      status,
     };
 
     const result = await upsertInvoice({ invoiceId, formState });
@@ -381,7 +384,22 @@ const InvoiceForm = () => {
               taxAmount={taxAmount}
               discountAmount={discountAmount}
               total={total}
+              status={status}
             />
+
+            <Form.Group className="mb-3">
+              <Form.Label className="fw-bold">Status:</Form.Label>
+              <Form.Select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="btn btn-light my-1"
+              >
+                <option value="draft">Draft</option>
+                <option value="sent">Sent</option>
+                <option value="paid">Paid</option>
+                <option value="overdue">Overdue</option>
+              </Form.Select>
+            </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label className="fw-bold">Currency:</Form.Label>

@@ -6,25 +6,8 @@ import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
 import Modal from "react-bootstrap/Modal";
 import { BiCloudDownload } from "react-icons/bi";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
-
-const GenerateInvoice = () => {
-  html2canvas(document.querySelector("#invoiceCapture")).then((canvas) => {
-    const imgData = canvas.toDataURL("image/png", 1.0);
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "pt",
-      format: [612, 792],
-    });
-    pdf.internal.scaleFactor = 1;
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save("invoice-001.pdf");
-  });
-};
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import InvoicePDF from "./InvoicePDF";
 
 const InvoiceModal = ({
   showModal,
@@ -36,6 +19,7 @@ const InvoiceModal = ({
   taxAmount,
   discountAmount,
   subTotal,
+  status, // Pass status for watermark
 }) => {
   return (
     <div>
@@ -159,26 +143,45 @@ const InvoiceModal = ({
             )}
           </div>
         </div>
-        <div className="pb-4 px-4">
-          <Row>
-            <Col md={6}></Col>
-            <Col md={6}>
+        <div className="pb-4 px-4 text-center">
+          <PDFDownloadLink
+            document={
+              <InvoicePDF
+                info={info}
+                items={items}
+                currency={currency}
+                subTotal={subTotal}
+                taxAmount={taxAmount}
+                discountAmount={discountAmount}
+                total={total}
+                status={status}
+              />
+            }
+            fileName={`invoice-${info.invoiceNumber}.pdf`}
+            style={{ textDecoration: "none" }}
+          >
+            {({ loading }) => (
               <Button
-                variant="outline-primary"
-                className="d-block w-100 mt-3 mt-md-0"
-                onClick={GenerateInvoice}
+                variant="primary"
+                className="d-block w-100 py-2"
+                disabled={loading}
               >
-                <BiCloudDownload
-                  style={{ width: "16px", height: "16px", marginTop: "-3px" }}
-                  className="me-2"
-                />
-                Download Copy
+                {loading ? (
+                  "Generating PDF..."
+                ) : (
+                  <>
+                    <BiCloudDownload
+                      style={{ width: "18px", height: "18px", marginTop: "-3px" }}
+                      className="me-2"
+                    />
+                    Download Industrial PDF
+                  </>
+                )}
               </Button>
-            </Col>
-          </Row>
+            )}
+          </PDFDownloadLink>
         </div>
       </Modal>
-      
     </div>
   );
 };

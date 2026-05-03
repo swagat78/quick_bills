@@ -1,0 +1,200 @@
+/* ============================================
+   BUSINESS HEALTH — Industrial Analytics Theme
+   ============================================ */
+
+.bh-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  font-family: 'Helvetica Neue', 'Inter', sans-serif;
+}
+
+/* Header */
+.bh-header {
+  margin-bottom: 2.5rem;
+}
+
+.bh-header h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #2d3436;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.bh-header p {
+  color: #636e72;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* KPI Cards */
+.bh-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.bh-kpi-card {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.bh-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: 16px 0 0 16px;
+}
+
+.bh-kpi-card.revenue::before { background: #0984e3; }
+.bh-kpi-card.paid::before { background: #00b894; }
+.bh-kpi-card.pending::before { background: #fdcb6e; }
+.bh-kpi-card.tax::before { background: #6c5ce7; }
+
+.bh-kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.bh-kpi-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #636e72;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.bh-kpi-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #2d3436;
+  line-height: 1.1;
+}
+
+.bh-kpi-sub {
+  font-size: 0.8rem;
+  color: #b2bec3;
+  margin-top: 0.5rem;
+}
+
+/* Chart Cards */
+.bh-chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .bh-chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bh-chart-card {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  padding: 1.75rem;
+}
+
+.bh-chart-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #636e72;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #2d3436;
+}
+
+/* Loading state */
+.bh-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #636e72;
+}
+
+.bh-loading .spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e9ecef;
+  border-top: 3px solid #2d3436;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Empty state */
+.bh-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #636e72;
+}
+
+.bh-empty h3 {
+  font-weight: 700;
+  color: #2d3436;
+  margin-bottom: 0.5rem;
+}
+
+/* Tax summary card */
+.bh-tax-card {
+  background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+  border: none;
+  border-radius: 16px;
+  padding: 2rem;
+  color: #fff;
+}
+
+.bh-tax-card .bh-chart-title {
+  color: rgba(255, 255, 255, 0.6);
+  border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+
+.bh-tax-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+}
+
+.bh-tax-label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Back link */
+.bh-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #636e72;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  transition: color 0.2s ease;
+}
+
+.bh-back:hover {
+  color: #2d3436;
+}
