@@ -13673,6 +13673,142 @@ hr {
   font-size: .85rem;
 }
 
+.df-container {
+  margin-bottom: 1.5rem;
+}
+
+.df-search-wrapper {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.df-search-icon {
+  color: #b2bec3;
+  pointer-events: none;
+  font-size: 1.1rem;
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+}
+
+.df-search-input {
+  color: #2d3436;
+  background: #fff;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  outline: none;
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  font-size: .9rem;
+  transition: all .25s;
+}
+
+.df-search-input:focus {
+  border-color: #2d3436;
+  box-shadow: 0 0 0 3px #2d343614;
+}
+
+.df-search-input::placeholder {
+  color: #b2bec3;
+}
+
+.df-filters {
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: .75rem;
+  display: flex;
+}
+
+.df-filter-group {
+  flex: 1;
+  min-width: 150px;
+}
+
+.df-filter-label {
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #636e72;
+  margin-bottom: 4px;
+  font-size: .7rem;
+  font-weight: 700;
+  display: block;
+}
+
+.df-filter-select, .df-filter-input {
+  color: #2d3436;
+  appearance: none;
+  background: #fff;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  outline: none;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: .85rem;
+  transition: border-color .2s;
+}
+
+.df-filter-select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23636e72' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 32px;
+}
+
+.df-filter-select:focus, .df-filter-input:focus {
+  border-color: #2d3436;
+}
+
+.df-clear-btn {
+  color: #636e72;
+  cursor: pointer;
+  white-space: nowrap;
+  background: #fff;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: .8rem;
+  font-weight: 600;
+  transition: all .2s;
+}
+
+.df-clear-btn:hover {
+  color: #d63031;
+  background: #d630310a;
+  border-color: #d63031;
+}
+
+.df-active-count {
+  color: #fff;
+  background: #2d3436;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 18px;
+  height: 18px;
+  margin-left: 6px;
+  font-size: .65rem;
+  font-weight: 700;
+  display: inline-flex;
+}
+
+.df-results-info {
+  color: #b2bec3;
+  margin-top: .75rem;
+  font-size: .8rem;
+}
+
+@media (width <= 768px) {
+  .df-filters {
+    flex-direction: column;
+  }
+
+  .df-filter-group {
+    min-width: 100%;
+  }
+}
+
 .bh-container {
   max-width: 1200px;
   margin: 0 auto;

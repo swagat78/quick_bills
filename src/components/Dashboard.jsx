@@ -1,15 +1,102 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { supabase } from "../supabaseClient";
 import { Container, Table, Button, Badge, Spinner, Dropdown, ButtonGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { BiPlus, BiFile, BiShow, BiBarChartAlt2, BiDownload } from "react-icons/bi";
 import { exportAsCSV, exportAsExcel } from "../utils/exportInvoices";
+import useDebounce from "../hooks/useDebounce";
+import DashboardFilters from "./DashboardFilters";
+
+const INITIAL_FILTERS = {
+  search: "",
+  status: "",
+  dateFrom: "",
+  dateTo: "",
+  amountMin: "",
+  amountMax: "",
+};
 
 const Dashboard = () => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
+  const [filters, setFilters] = useState(INITIAL_FILTERS);
   const navigate = useNavigate();
+
+  // Debounce the search input (400ms delay)
+  const debouncedSearch = useDebounce(filters.search, 400);
+
+  // Count active filters for the badge
+  const activeFilterCount = [
+    debouncedSearch,
+    filters.status,
+    filters.dateFrom,
+    filters.dateTo,
+    filters.amountMin,
+    filters.amountMax,
+  ].filter(Boolean).length;
+
+  // ── Optimized Supabase Query with Server-Side Filtering ──
+  const fetchInvoices = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Start building the query
+      let query = supabase
+        .from("invoices")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      // Filter: Status
+      if (filters.status) {
+        query = query.eq("status", filters.status);
+      }
+
+      // Filter: Date range (using date_of_issue or created_at)
+      if (filters.dateFrom) {
+        query = query.gte("created_at", filters.dateFrom);
+      }
+      if (filters.dateTo) {
+        // Add one day to include the end date
+        const endDate = new Date(filters.dateTo);
+        endDate.setDate(endDate.getDate() + 1);
+        query = query.lt("created_at", endDate.toISOString().split("T")[0]);
+      }
+
+      // Filter: Amount range
+      if (filters.amountMin) {
+        query = query.gte("total", parseFloat(filters.amountMin));
+      }
+      if (filters.amountMax) {
+        query = query.lte("total", parseFloat(filters.amountMax));
+      }
+
+      // Filter: Search (name, email, or invoice number)
+      // Supabase supports .or() for multi-column text search
+      if (debouncedSearch) {
+        const term = `%${debouncedSearch}%`;
+        query = query.or(
+          `bill_to.ilike.${term},bill_to_email.ilike.${term},bill_from.ilike.${term},invoice_number.eq.${parseInt(debouncedSearch) || -1}`
+        );
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+      setInvoices(data || []);
+    } catch (error) {
+      console.error("Error fetching invoices:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [debouncedSearch, filters.status, filters.dateFrom, filters.dateTo, filters.amountMin, filters.amountMax]);
+
+  // Re-fetch when any filter changes (debounced search included)
+  useEffect(() => {
+    fetchInvoices();
+  }, [fetchInvoices]);
 
   const handleExport = async (format) => {
     try {
@@ -26,34 +113,30 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
-    fetchInvoices();
-  }, []);
-
-  const fetchInvoices = async () => {
-    try {
-      setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from("invoices")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setInvoices(data || []);
-    } catch (error) {
-      console.error("Error fetching invoices:", error.message);
-    } finally {
-      setLoading(false);
-    }
+  // Status badge color mapping
+  const getStatusBadge = (status) => {
+    const map = {
+      paid: { bg: "success", text: "text-success", border: "border-success" },
+      sent: { bg: "primary", text: "text-primary", border: "border-primary" },
+      overdue: { bg: "danger", text: "text-danger", border: "border-danger" },
+      draft: { bg: "secondary", text: "text-secondary", border: "border-secondary" },
+    };
+    const s = (status || "draft").toLowerCase();
+    const style = map[s] || map.draft;
+    return (
+      <Badge
+        bg={style.bg}
+        className={`bg-opacity-10 ${style.text} border ${style.border} border-opacity-25 px-2 py-1`}
+      >
+        {s.charAt(0).toUpperCase() + s.slice(1)}
+      </Badge>
+    );
   };
 
   return (
     <Container className="py-5">
-      <div className="d-flex justify-content-between align-items-center mb-5">
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 className="fw-bold">Your Invoices</h2>
           <p className="text-muted">Manage and track all your bills in one place.</p>
@@ -100,6 +183,15 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Search & Filters */}
+      <DashboardFilters
+        filters={filters}
+        setFilters={setFilters}
+        activeCount={activeFilterCount}
+        resultCount={invoices.length}
+      />
+
+      {/* Content */}
       {loading ? (
         <div className="text-center py-5">
           <Spinner animation="border" variant="primary" />
@@ -108,11 +200,24 @@ const Dashboard = () => {
       ) : invoices.length === 0 ? (
         <div className="text-center py-5 bg-light rounded-4 border border-dashed">
           <BiFile size={48} className="text-muted mb-3" />
-          <h4>No invoices found</h4>
-          <p className="text-muted">Start by creating your first professional invoice.</p>
-          <Button variant="outline-primary" onClick={() => navigate("/create")}>
-            Create Now
-          </Button>
+          <h4>{activeFilterCount > 0 ? "No matching invoices" : "No invoices found"}</h4>
+          <p className="text-muted">
+            {activeFilterCount > 0
+              ? "Try adjusting your filters or search query."
+              : "Start by creating your first professional invoice."}
+          </p>
+          {activeFilterCount > 0 ? (
+            <Button
+              variant="outline-dark"
+              onClick={() => setFilters(INITIAL_FILTERS)}
+            >
+              Clear All Filters
+            </Button>
+          ) : (
+            <Button variant="outline-primary" onClick={() => navigate("/create")}>
+              Create Now
+            </Button>
+          )}
         </div>
       ) : (
         <div className="bg-white rounded-4 shadow-sm overflow-hidden border">
@@ -135,15 +240,11 @@ const Dashboard = () => {
                     <div>{inv.bill_to || "No Name"}</div>
                     <div className="small text-muted">{inv.bill_to_email}</div>
                   </td>
-                  <td>{new Date(inv.date_of_issue).toLocaleDateString()}</td>
+                  <td>{inv.date_of_issue ? new Date(inv.date_of_issue).toLocaleDateString() : "—"}</td>
                   <td className="fw-bold">
                     {inv.currency}{inv.total}
                   </td>
-                  <td>
-                    <Badge bg="success" className="bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">
-                      {inv.status || "Draft"}
-                    </Badge>
-                  </td>
+                  <td>{getStatusBadge(inv.status)}</td>
                   <td className="px-4 text-end">
                     <Button variant="light" size="sm" className="me-2">
                       <BiShow />

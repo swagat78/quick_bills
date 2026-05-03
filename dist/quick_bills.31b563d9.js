@@ -17658,7 +17658,7 @@ $RefreshReg$(_c1, "App");
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","react-router-dom":"61z4w","bootstrap/dist/css/bootstrap.min.css":"i5LP7","./App.css":"6n0o6","react-bootstrap":"ctEhb","./components/InvoiceForm":"4Xh7O","./components/Auth":"l8g1u","./components/Dashboard":"iBVqL","./supabaseClient":"20Hh5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi","./components/BusinessHealth":"fCNyc"}],"61z4w":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","react-router-dom":"61z4w","bootstrap/dist/css/bootstrap.min.css":"i5LP7","./App.css":"6n0o6","react-bootstrap":"ctEhb","./components/InvoiceForm":"4Xh7O","./components/Auth":"l8g1u","./components/Dashboard":"iBVqL","./components/BusinessHealth":"fCNyc","./supabaseClient":"20Hh5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"61z4w":[function(require,module,exports,__globalThis) {
 /**
  * React Router DOM v6.30.3
  *
@@ -36530,7 +36530,7 @@ $RefreshReg$(_c, "InvoiceForm");
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","bootstrap/dist/css/bootstrap.min.css":"i5LP7","react-bootstrap/Row":"2DPD4","react-bootstrap/Col":"6x0qd","react-bootstrap/Button":"kNKIo","react-bootstrap/Form":"6LPqw","react-bootstrap/Card":"56ajS","react-bootstrap/Alert":"aR4Gi","./InvoiceItem":"eMbZ4","./InvoiceModal":"4gGrI","react-bootstrap/InputGroup":"jh59p","react-router-dom":"61z4w","../hooks/useUpsertInvoice":"kkWnm","../supabaseClient":"20Hh5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi","../utils/gstCalculator":"9BzQx","./AIPrompt":"hcxUs"}],"i5LP7":[function() {},{}],"eMbZ4":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","bootstrap/dist/css/bootstrap.min.css":"i5LP7","react-bootstrap/Row":"2DPD4","react-bootstrap/Col":"6x0qd","react-bootstrap/Button":"kNKIo","react-bootstrap/Form":"6LPqw","react-bootstrap/Card":"56ajS","react-bootstrap/Alert":"aR4Gi","./InvoiceItem":"eMbZ4","./InvoiceModal":"4gGrI","react-bootstrap/InputGroup":"jh59p","react-router-dom":"61z4w","../hooks/useUpsertInvoice":"kkWnm","../supabaseClient":"20Hh5","../utils/gstCalculator":"9BzQx","./AIPrompt":"hcxUs","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"i5LP7":[function() {},{}],"eMbZ4":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$3ede = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 $parcel$ReactRefreshHelpers$3ede.init();
 var prevRefreshReg = globalThis.$RefreshReg$;
@@ -75221,7 +75221,7 @@ $RefreshReg$(_c, "InvoiceModal");
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","bootstrap/dist/css/bootstrap.min.css":"i5LP7","react-bootstrap/Row":"2DPD4","react-bootstrap/Col":"6x0qd","react-bootstrap/Button":"kNKIo","react-bootstrap/Table":"9NRQ4","react-bootstrap/Modal":"dj8kw","react-icons/bi":"asQh8","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi","html2canvas":"jgq02","jspdf":"b6g54"}],"i5LP7":[function() {},{}],"jgq02":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","bootstrap/dist/css/bootstrap.min.css":"i5LP7","react-bootstrap/Row":"2DPD4","react-bootstrap/Col":"6x0qd","react-bootstrap/Button":"kNKIo","react-bootstrap/Table":"9NRQ4","react-bootstrap/Modal":"dj8kw","react-icons/bi":"asQh8","html2canvas":"jgq02","jspdf":"b6g54","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"i5LP7":[function() {},{}],"jgq02":[function(require,module,exports,__globalThis) {
 /*!
  * html2canvas 1.4.1 <https://html2canvas.hertzen.com>
  * Copyright (c) 2022 Niklas von Hertzen <https://hertzen.com>
@@ -136386,13 +136386,88 @@ var _reactBootstrap = require("react-bootstrap");
 var _reactRouterDom = require("react-router-dom");
 var _bi = require("react-icons/bi");
 var _exportInvoices = require("../utils/exportInvoices");
+var _useDebounce = require("../hooks/useDebounce");
+var _useDebounceDefault = parcelHelpers.interopDefault(_useDebounce);
+var _dashboardFilters = require("./DashboardFilters");
+var _dashboardFiltersDefault = parcelHelpers.interopDefault(_dashboardFilters);
 var _s = $RefreshSig$();
+const INITIAL_FILTERS = {
+    search: "",
+    status: "",
+    dateFrom: "",
+    dateTo: "",
+    amountMin: "",
+    amountMax: ""
+};
 const Dashboard = ()=>{
     _s();
     const [invoices, setInvoices] = (0, _react.useState)([]);
     const [loading, setLoading] = (0, _react.useState)(true);
     const [exporting, setExporting] = (0, _react.useState)(false);
+    const [filters, setFilters] = (0, _react.useState)(INITIAL_FILTERS);
     const navigate = (0, _reactRouterDom.useNavigate)();
+    // Debounce the search input (400ms delay)
+    const debouncedSearch = (0, _useDebounceDefault.default)(filters.search, 400);
+    // Count active filters for the badge
+    const activeFilterCount = [
+        debouncedSearch,
+        filters.status,
+        filters.dateFrom,
+        filters.dateTo,
+        filters.amountMin,
+        filters.amountMax
+    ].filter(Boolean).length;
+    // ── Optimized Supabase Query with Server-Side Filtering ──
+    const fetchInvoices = (0, _react.useCallback)(async ()=>{
+        try {
+            setLoading(true);
+            const { data: { user } } = await (0, _supabaseClient.supabase).auth.getUser();
+            if (!user) return;
+            // Start building the query
+            let query = (0, _supabaseClient.supabase).from("invoices").select("*").order("created_at", {
+                ascending: false
+            });
+            // Filter: Status
+            if (filters.status) query = query.eq("status", filters.status);
+            // Filter: Date range (using date_of_issue or created_at)
+            if (filters.dateFrom) query = query.gte("created_at", filters.dateFrom);
+            if (filters.dateTo) {
+                // Add one day to include the end date
+                const endDate = new Date(filters.dateTo);
+                endDate.setDate(endDate.getDate() + 1);
+                query = query.lt("created_at", endDate.toISOString().split("T")[0]);
+            }
+            // Filter: Amount range
+            if (filters.amountMin) query = query.gte("total", parseFloat(filters.amountMin));
+            if (filters.amountMax) query = query.lte("total", parseFloat(filters.amountMax));
+            // Filter: Search (name, email, or invoice number)
+            // Supabase supports .or() for multi-column text search
+            if (debouncedSearch) {
+                const term = `%${debouncedSearch}%`;
+                query = query.or(`bill_to.ilike.${term},bill_to_email.ilike.${term},bill_from.ilike.${term},invoice_number.eq.${parseInt(debouncedSearch) || -1}`);
+            }
+            const { data, error } = await query;
+            if (error) throw error;
+            setInvoices(data || []);
+        } catch (error) {
+            console.error("Error fetching invoices:", error.message);
+        } finally{
+            setLoading(false);
+        }
+    }, [
+        debouncedSearch,
+        filters.status,
+        filters.dateFrom,
+        filters.dateTo,
+        filters.amountMin,
+        filters.amountMax
+    ]);
+    // Re-fetch when any filter changes (debounced search included)
+    (0, _react.useEffect)(()=>{
+        fetchInvoices();
+    }, [
+        fetchInvoices
+    ]);
     const handleExport = async (format)=>{
         try {
             setExporting(true);
@@ -136404,30 +136479,47 @@ const Dashboard = ()=>{
             setExporting(false);
         }
     };
-    (0, _react.useEffect)(()=>{
-        fetchInvoices();
-    }, []);
-    const fetchInvoices = async ()=>{
-        try {
-            setLoading(true);
-            const { data: { user } } = await (0, _supabaseClient.supabase).auth.getUser();
-            if (!user) return;
-            const { data, error } = await (0, _supabaseClient.supabase).from("invoices").select("*").order("created_at", {
-                ascending: false
-            });
-            if (error) throw error;
-            setInvoices(data || []);
-        } catch (error) {
-            console.error("Error fetching invoices:", error.message);
-        } finally{
-            setLoading(false);
-        }
+    // Status badge color mapping
+    const getStatusBadge = (status)=>{
+        const map = {
+            paid: {
+                bg: "success",
+                text: "text-success",
+                border: "border-success"
+            },
+            sent: {
+                bg: "primary",
+                text: "text-primary",
+                border: "border-primary"
+            },
+            overdue: {
+                bg: "danger",
+                text: "text-danger",
+                border: "border-danger"
+            },
+            draft: {
+                bg: "secondary",
+                text: "text-secondary",
+                border: "border-secondary"
+            }
+        };
+        const s = (status || "draft").toLowerCase();
+        const style = map[s] || map.draft;
+        return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Badge), {
+            bg: style.bg,
+            className: `bg-opacity-10 ${style.text} border ${style.border} border-opacity-25 px-2 py-1`,
+            children: s.charAt(0).toUpperCase() + s.slice(1)
+        }, void 0, false, {
+            fileName: "src/components/Dashboard.jsx",
+            lineNumber: 127,
+            columnNumber: 7
+        }, undefined);
     };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Container), {
         className: "py-5",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                className: "d-flex justify-content-between align-items-center mb-5",
+                className: "d-flex justify-content-between align-items-center mb-4",
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                         children: [
@@ -136436,7 +136528,7 @@ const Dashboard = ()=>{
                                 children: "Your Invoices"
                             }, void 0, false, {
                                 fileName: "src/components/Dashboard.jsx",
-                                lineNumber: 58,
+                                lineNumber: 141,
                                 columnNumber: 11
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -136444,13 +136536,13 @@ const Dashboard = ()=>{
                                 children: "Manage and track all your bills in one place."
                             }, void 0, false, {
                                 fileName: "src/components/Dashboard.jsx",
-                                lineNumber: 59,
+                                lineNumber: 142,
                                 columnNumber: 11
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/components/Dashboard.jsx",
-                        lineNumber: 57,
+                        lineNumber: 140,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -136469,14 +136561,14 @@ const Dashboard = ()=>{
                                                 size: 18
                                             }, void 0, false, {
                                                 fileName: "src/components/Dashboard.jsx",
-                                                lineNumber: 69,
+                                                lineNumber: 152,
                                                 columnNumber: 15
                                             }, undefined),
                                             exporting ? "Exporting..." : "Export"
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/components/Dashboard.jsx",
-                                        lineNumber: 63,
+                                        lineNumber: 146,
                                         columnNumber: 13
                                     }, undefined),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Dropdown).Toggle, {
@@ -136485,7 +136577,7 @@ const Dashboard = ()=>{
                                         disabled: exporting || invoices.length === 0
                                     }, void 0, false, {
                                         fileName: "src/components/Dashboard.jsx",
-                                        lineNumber: 72,
+                                        lineNumber: 155,
                                         columnNumber: 13
                                     }, undefined),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Dropdown).Menu, {
@@ -136495,7 +136587,7 @@ const Dashboard = ()=>{
                                                 children: "\uD83D\uDCCA Excel (.xlsx)"
                                             }, void 0, false, {
                                                 fileName: "src/components/Dashboard.jsx",
-                                                lineNumber: 78,
+                                                lineNumber: 161,
                                                 columnNumber: 15
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Dropdown).Item, {
@@ -136503,19 +136595,19 @@ const Dashboard = ()=>{
                                                 children: "\uD83D\uDCC4 CSV (.csv)"
                                             }, void 0, false, {
                                                 fileName: "src/components/Dashboard.jsx",
-                                                lineNumber: 81,
+                                                lineNumber: 164,
                                                 columnNumber: 15
                                             }, undefined)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/components/Dashboard.jsx",
-                                        lineNumber: 77,
+                                        lineNumber: 160,
                                         columnNumber: 13
                                     }, undefined)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/Dashboard.jsx",
-                                lineNumber: 62,
+                                lineNumber: 145,
                                 columnNumber: 11
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Button), {
@@ -136527,14 +136619,14 @@ const Dashboard = ()=>{
                                         size: 20
                                     }, void 0, false, {
                                         fileName: "src/components/Dashboard.jsx",
-                                        lineNumber: 91,
+                                        lineNumber: 174,
                                         columnNumber: 13
                                     }, undefined),
                                     " Business Health"
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/Dashboard.jsx",
-                                lineNumber: 86,
+                                lineNumber: 169,
                                 columnNumber: 11
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Button), {
@@ -136546,26 +136638,36 @@ const Dashboard = ()=>{
                                         size: 20
                                     }, void 0, false, {
                                         fileName: "src/components/Dashboard.jsx",
-                                        lineNumber: 98,
+                                        lineNumber: 181,
                                         columnNumber: 13
                                     }, undefined),
                                     " New Invoice"
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/Dashboard.jsx",
-                                lineNumber: 93,
+                                lineNumber: 176,
                                 columnNumber: 11
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/components/Dashboard.jsx",
-                        lineNumber: 61,
+                        lineNumber: 144,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/components/Dashboard.jsx",
-                lineNumber: 56,
+                lineNumber: 139,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _dashboardFiltersDefault.default), {
+                filters: filters,
+                setFilters: setFilters,
+                activeCount: activeFilterCount,
+                resultCount: invoices.length
+            }, void 0, false, {
+                fileName: "src/components/Dashboard.jsx",
+                lineNumber: 187,
                 columnNumber: 7
             }, undefined),
             loading ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -136576,7 +136678,7 @@ const Dashboard = ()=>{
                         variant: "primary"
                     }, void 0, false, {
                         fileName: "src/components/Dashboard.jsx",
-                        lineNumber: 105,
+                        lineNumber: 197,
                         columnNumber: 11
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -136584,13 +136686,13 @@ const Dashboard = ()=>{
                         children: "Loading your workspace..."
                     }, void 0, false, {
                         fileName: "src/components/Dashboard.jsx",
-                        lineNumber: 106,
+                        lineNumber: 198,
                         columnNumber: 11
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/components/Dashboard.jsx",
-                lineNumber: 104,
+                lineNumber: 196,
                 columnNumber: 9
             }, undefined) : invoices.length === 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 className: "text-center py-5 bg-light rounded-4 border border-dashed",
@@ -136600,37 +136702,45 @@ const Dashboard = ()=>{
                         className: "text-muted mb-3"
                     }, void 0, false, {
                         fileName: "src/components/Dashboard.jsx",
-                        lineNumber: 110,
+                        lineNumber: 202,
                         columnNumber: 11
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
-                        children: "No invoices found"
+                        children: activeFilterCount > 0 ? "No matching invoices" : "No invoices found"
                     }, void 0, false, {
                         fileName: "src/components/Dashboard.jsx",
-                        lineNumber: 111,
+                        lineNumber: 203,
                         columnNumber: 11
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                         className: "text-muted",
-                        children: "Start by creating your first professional invoice."
+                        children: activeFilterCount > 0 ? "Try adjusting your filters or search query." : "Start by creating your first professional invoice."
                     }, void 0, false, {
                         fileName: "src/components/Dashboard.jsx",
-                        lineNumber: 112,
+                        lineNumber: 204,
                         columnNumber: 11
                     }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Button), {
+                    activeFilterCount > 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Button), {
+                        variant: "outline-dark",
+                        onClick: ()=>setFilters(INITIAL_FILTERS),
+                        children: "Clear All Filters"
+                    }, void 0, false, {
+                        fileName: "src/components/Dashboard.jsx",
+                        lineNumber: 210,
+                        columnNumber: 13
+                    }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Button), {
                         variant: "outline-primary",
                         onClick: ()=>navigate("/create"),
                         children: "Create Now"
                     }, void 0, false, {
                         fileName: "src/components/Dashboard.jsx",
-                        lineNumber: 113,
-                        columnNumber: 11
+                        lineNumber: 217,
+                        columnNumber: 13
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/components/Dashboard.jsx",
-                lineNumber: 109,
+                lineNumber: 201,
                 columnNumber: 9
             }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 className: "bg-white rounded-4 shadow-sm overflow-hidden border",
@@ -136648,7 +136758,7 @@ const Dashboard = ()=>{
                                         children: "Invoice #"
                                     }, void 0, false, {
                                         fileName: "src/components/Dashboard.jsx",
-                                        lineNumber: 122,
+                                        lineNumber: 227,
                                         columnNumber: 17
                                     }, undefined),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("th", {
@@ -136656,7 +136766,7 @@ const Dashboard = ()=>{
                                         children: "Billed To"
                                     }, void 0, false, {
                                         fileName: "src/components/Dashboard.jsx",
-                                        lineNumber: 123,
+                                        lineNumber: 228,
                                         columnNumber: 17
                                     }, undefined),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("th", {
@@ -136664,7 +136774,7 @@ const Dashboard = ()=>{
                                         children: "Date"
                                     }, void 0, false, {
                                         fileName: "src/components/Dashboard.jsx",
-                                        lineNumber: 124,
+                                        lineNumber: 229,
                                         columnNumber: 17
                                     }, undefined),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("th", {
@@ -136672,7 +136782,7 @@ const Dashboard = ()=>{
                                         children: "Amount"
                                     }, void 0, false, {
                                         fileName: "src/components/Dashboard.jsx",
-                                        lineNumber: 125,
+                                        lineNumber: 230,
                                         columnNumber: 17
                                     }, undefined),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("th", {
@@ -136680,7 +136790,7 @@ const Dashboard = ()=>{
                                         children: "Status"
                                     }, void 0, false, {
                                         fileName: "src/components/Dashboard.jsx",
-                                        lineNumber: 126,
+                                        lineNumber: 231,
                                         columnNumber: 17
                                     }, undefined),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("th", {
@@ -136688,18 +136798,18 @@ const Dashboard = ()=>{
                                         children: "Actions"
                                     }, void 0, false, {
                                         fileName: "src/components/Dashboard.jsx",
-                                        lineNumber: 127,
+                                        lineNumber: 232,
                                         columnNumber: 17
                                     }, undefined)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/Dashboard.jsx",
-                                lineNumber: 121,
+                                lineNumber: 226,
                                 columnNumber: 15
                             }, undefined)
                         }, void 0, false, {
                             fileName: "src/components/Dashboard.jsx",
-                            lineNumber: 120,
+                            lineNumber: 225,
                             columnNumber: 13
                         }, undefined),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tbody", {
@@ -136713,7 +136823,7 @@ const Dashboard = ()=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/Dashboard.jsx",
-                                            lineNumber: 133,
+                                            lineNumber: 238,
                                             columnNumber: 19
                                         }, undefined),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -136722,7 +136832,7 @@ const Dashboard = ()=>{
                                                     children: inv.bill_to || "No Name"
                                                 }, void 0, false, {
                                                     fileName: "src/components/Dashboard.jsx",
-                                                    lineNumber: 135,
+                                                    lineNumber: 240,
                                                     columnNumber: 21
                                                 }, undefined),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -136730,20 +136840,20 @@ const Dashboard = ()=>{
                                                     children: inv.bill_to_email
                                                 }, void 0, false, {
                                                     fileName: "src/components/Dashboard.jsx",
-                                                    lineNumber: 136,
+                                                    lineNumber: 241,
                                                     columnNumber: 21
                                                 }, undefined)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/Dashboard.jsx",
-                                            lineNumber: 134,
+                                            lineNumber: 239,
                                             columnNumber: 19
                                         }, undefined),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
-                                            children: new Date(inv.date_of_issue).toLocaleDateString()
+                                            children: inv.date_of_issue ? new Date(inv.date_of_issue).toLocaleDateString() : "\u2014"
                                         }, void 0, false, {
                                             fileName: "src/components/Dashboard.jsx",
-                                            lineNumber: 138,
+                                            lineNumber: 243,
                                             columnNumber: 19
                                         }, undefined),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -136754,22 +136864,14 @@ const Dashboard = ()=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/Dashboard.jsx",
-                                            lineNumber: 139,
+                                            lineNumber: 244,
                                             columnNumber: 19
                                         }, undefined),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
-                                            children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Badge), {
-                                                bg: "success",
-                                                className: "bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1",
-                                                children: inv.status || "Draft"
-                                            }, void 0, false, {
-                                                fileName: "src/components/Dashboard.jsx",
-                                                lineNumber: 143,
-                                                columnNumber: 21
-                                            }, undefined)
+                                            children: getStatusBadge(inv.status)
                                         }, void 0, false, {
                                             fileName: "src/components/Dashboard.jsx",
-                                            lineNumber: 142,
+                                            lineNumber: 247,
                                             columnNumber: 19
                                         }, undefined),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -136781,12 +136883,12 @@ const Dashboard = ()=>{
                                                     className: "me-2",
                                                     children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _bi.BiShow), {}, void 0, false, {
                                                         fileName: "src/components/Dashboard.jsx",
-                                                        lineNumber: 149,
+                                                        lineNumber: 250,
                                                         columnNumber: 23
                                                     }, undefined)
                                                 }, void 0, false, {
                                                     fileName: "src/components/Dashboard.jsx",
-                                                    lineNumber: 148,
+                                                    lineNumber: 249,
                                                     columnNumber: 21
                                                 }, undefined),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Button), {
@@ -136796,47 +136898,48 @@ const Dashboard = ()=>{
                                                     children: "Edit"
                                                 }, void 0, false, {
                                                     fileName: "src/components/Dashboard.jsx",
-                                                    lineNumber: 151,
+                                                    lineNumber: 252,
                                                     columnNumber: 21
                                                 }, undefined)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/Dashboard.jsx",
-                                            lineNumber: 147,
+                                            lineNumber: 248,
                                             columnNumber: 19
                                         }, undefined)
                                     ]
                                 }, inv.id, true, {
                                     fileName: "src/components/Dashboard.jsx",
-                                    lineNumber: 132,
+                                    lineNumber: 237,
                                     columnNumber: 17
                                 }, undefined))
                         }, void 0, false, {
                             fileName: "src/components/Dashboard.jsx",
-                            lineNumber: 130,
+                            lineNumber: 235,
                             columnNumber: 13
                         }, undefined)
                     ]
                 }, void 0, true, {
                     fileName: "src/components/Dashboard.jsx",
-                    lineNumber: 119,
+                    lineNumber: 224,
                     columnNumber: 11
                 }, undefined)
             }, void 0, false, {
                 fileName: "src/components/Dashboard.jsx",
-                lineNumber: 118,
+                lineNumber: 223,
                 columnNumber: 9
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/components/Dashboard.jsx",
-        lineNumber: 55,
+        lineNumber: 137,
         columnNumber: 5
     }, undefined);
 };
-_s(Dashboard, "ItyESBrKYMwNPMnS+bOCMf3newE=", false, function() {
+_s(Dashboard, "BrjJ28/cTo+lphZAFg+bqiGDkUk=", false, function() {
     return [
-        (0, _reactRouterDom.useNavigate)
+        (0, _reactRouterDom.useNavigate),
+        (0, _useDebounceDefault.default)
     ];
 });
 _c = Dashboard;
@@ -136849,7 +136952,7 @@ $RefreshReg$(_c, "Dashboard");
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../supabaseClient":"20Hh5","react-bootstrap":"ctEhb","react-router-dom":"61z4w","react-icons/bi":"asQh8","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi","../utils/exportInvoices":"9U8UB"}],"9U8UB":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../supabaseClient":"20Hh5","react-bootstrap":"ctEhb","react-router-dom":"61z4w","react-icons/bi":"asQh8","../utils/exportInvoices":"9U8UB","../hooks/useDebounce":"aO79E","./DashboardFilters":"nEvs2","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"9U8UB":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "exportAsCSV", ()=>exportAsCSV);
@@ -168255,7 +168358,350 @@ const version = XLSX.version;
 },{"f481c164bc92069e":"eoH60","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"eoH60":[function(require,module,exports,__globalThis) {
 "use strict";
 
-},{}],"fCNyc":[function(require,module,exports,__globalThis) {
+},{}],"aO79E":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$3de1 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$3de1.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$3de1.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _react = require("react");
+var _s = $RefreshSig$();
+/**
+ * Debounce hook — delays updating the value until the user
+ * stops typing for the specified delay (default 400ms).
+ * Prevents firing a query on every keystroke.
+ */ const useDebounce = (value, delay = 400)=>{
+    _s();
+    const [debouncedValue, setDebouncedValue] = (0, _react.useState)(value);
+    (0, _react.useEffect)(()=>{
+        const timer = setTimeout(()=>{
+            setDebouncedValue(value);
+        }, delay);
+        return ()=>clearTimeout(timer);
+    }, [
+        value,
+        delay
+    ]);
+    return debouncedValue;
+};
+_s(useDebounce, "KDuPAtDOgxm8PU6legVJOb3oOmA=");
+exports.default = useDebounce;
+
+  $parcel$ReactRefreshHelpers$3de1.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react":"jMk1U","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"nEvs2":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$2625 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$2625.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$2625.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _bi = require("react-icons/bi");
+var _dashboardFiltersCss = require("./DashboardFilters.css");
+const DashboardFilters = ({ filters, setFilters, activeCount, resultCount })=>{
+    const handleChange = (field, value)=>{
+        setFilters((prev)=>({
+                ...prev,
+                [field]: value
+            }));
+    };
+    const clearAll = ()=>{
+        setFilters({
+            search: "",
+            status: "",
+            dateFrom: "",
+            dateTo: "",
+            amountMin: "",
+            amountMax: ""
+        });
+    };
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "df-container",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "df-search-wrapper",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _bi.BiSearch), {
+                        className: "df-search-icon"
+                    }, void 0, false, {
+                        fileName: "src/components/DashboardFilters.jsx",
+                        lineNumber: 25,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                        className: "df-search-input",
+                        type: "text",
+                        placeholder: "Search by customer name, email, or invoice number...",
+                        value: filters.search,
+                        onChange: (e)=>handleChange("search", e.target.value)
+                    }, void 0, false, {
+                        fileName: "src/components/DashboardFilters.jsx",
+                        lineNumber: 26,
+                        columnNumber: 9
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/DashboardFilters.jsx",
+                lineNumber: 24,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "df-filters",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "df-filter-group",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                                className: "df-filter-label",
+                                children: "Status"
+                            }, void 0, false, {
+                                fileName: "src/components/DashboardFilters.jsx",
+                                lineNumber: 39,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("select", {
+                                className: "df-filter-select",
+                                value: filters.status,
+                                onChange: (e)=>handleChange("status", e.target.value),
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
+                                        value: "",
+                                        children: "All Statuses"
+                                    }, void 0, false, {
+                                        fileName: "src/components/DashboardFilters.jsx",
+                                        lineNumber: 45,
+                                        columnNumber: 13
+                                    }, undefined),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
+                                        value: "draft",
+                                        children: "Draft"
+                                    }, void 0, false, {
+                                        fileName: "src/components/DashboardFilters.jsx",
+                                        lineNumber: 46,
+                                        columnNumber: 13
+                                    }, undefined),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
+                                        value: "sent",
+                                        children: "Sent"
+                                    }, void 0, false, {
+                                        fileName: "src/components/DashboardFilters.jsx",
+                                        lineNumber: 47,
+                                        columnNumber: 13
+                                    }, undefined),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
+                                        value: "paid",
+                                        children: "Paid"
+                                    }, void 0, false, {
+                                        fileName: "src/components/DashboardFilters.jsx",
+                                        lineNumber: 48,
+                                        columnNumber: 13
+                                    }, undefined),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
+                                        value: "overdue",
+                                        children: "Overdue"
+                                    }, void 0, false, {
+                                        fileName: "src/components/DashboardFilters.jsx",
+                                        lineNumber: 49,
+                                        columnNumber: 13
+                                    }, undefined)
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/components/DashboardFilters.jsx",
+                                lineNumber: 40,
+                                columnNumber: 11
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/components/DashboardFilters.jsx",
+                        lineNumber: 38,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "df-filter-group",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                                className: "df-filter-label",
+                                children: "From Date"
+                            }, void 0, false, {
+                                fileName: "src/components/DashboardFilters.jsx",
+                                lineNumber: 55,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                                className: "df-filter-input",
+                                type: "date",
+                                value: filters.dateFrom,
+                                onChange: (e)=>handleChange("dateFrom", e.target.value)
+                            }, void 0, false, {
+                                fileName: "src/components/DashboardFilters.jsx",
+                                lineNumber: 56,
+                                columnNumber: 11
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/components/DashboardFilters.jsx",
+                        lineNumber: 54,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "df-filter-group",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                                className: "df-filter-label",
+                                children: "To Date"
+                            }, void 0, false, {
+                                fileName: "src/components/DashboardFilters.jsx",
+                                lineNumber: 66,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                                className: "df-filter-input",
+                                type: "date",
+                                value: filters.dateTo,
+                                onChange: (e)=>handleChange("dateTo", e.target.value)
+                            }, void 0, false, {
+                                fileName: "src/components/DashboardFilters.jsx",
+                                lineNumber: 67,
+                                columnNumber: 11
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/components/DashboardFilters.jsx",
+                        lineNumber: 65,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "df-filter-group",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                                className: "df-filter-label",
+                                children: "Min Amount"
+                            }, void 0, false, {
+                                fileName: "src/components/DashboardFilters.jsx",
+                                lineNumber: 77,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                                className: "df-filter-input",
+                                type: "number",
+                                placeholder: "\u20B90",
+                                min: "0",
+                                value: filters.amountMin,
+                                onChange: (e)=>handleChange("amountMin", e.target.value)
+                            }, void 0, false, {
+                                fileName: "src/components/DashboardFilters.jsx",
+                                lineNumber: 78,
+                                columnNumber: 11
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/components/DashboardFilters.jsx",
+                        lineNumber: 76,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "df-filter-group",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                                className: "df-filter-label",
+                                children: "Max Amount"
+                            }, void 0, false, {
+                                fileName: "src/components/DashboardFilters.jsx",
+                                lineNumber: 90,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                                className: "df-filter-input",
+                                type: "number",
+                                placeholder: "\u20B9\u221E",
+                                min: "0",
+                                value: filters.amountMax,
+                                onChange: (e)=>handleChange("amountMax", e.target.value)
+                            }, void 0, false, {
+                                fileName: "src/components/DashboardFilters.jsx",
+                                lineNumber: 91,
+                                columnNumber: 11
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/components/DashboardFilters.jsx",
+                        lineNumber: 89,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                        className: "df-clear-btn",
+                        onClick: clearAll,
+                        children: [
+                            "Clear",
+                            activeCount > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                className: "df-active-count",
+                                children: activeCount
+                            }, void 0, false, {
+                                fileName: "src/components/DashboardFilters.jsx",
+                                lineNumber: 104,
+                                columnNumber: 31
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/components/DashboardFilters.jsx",
+                        lineNumber: 102,
+                        columnNumber: 9
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/DashboardFilters.jsx",
+                lineNumber: 36,
+                columnNumber: 7
+            }, undefined),
+            activeCount > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "df-results-info",
+                children: [
+                    "Showing ",
+                    resultCount,
+                    " invoice",
+                    resultCount !== 1 ? "s" : "",
+                    " matching",
+                    " ",
+                    activeCount,
+                    " filter",
+                    activeCount !== 1 ? "s" : ""
+                ]
+            }, void 0, true, {
+                fileName: "src/components/DashboardFilters.jsx",
+                lineNumber: 110,
+                columnNumber: 9
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/components/DashboardFilters.jsx",
+        lineNumber: 22,
+        columnNumber: 5
+    }, undefined);
+};
+_c = DashboardFilters;
+exports.default = DashboardFilters;
+var _c;
+$RefreshReg$(_c, "DashboardFilters");
+
+  $parcel$ReactRefreshHelpers$2625.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","react-icons/bi":"asQh8","./DashboardFilters.css":"cOgjG","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"cOgjG":[function() {},{}],"fCNyc":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$98a3 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 $parcel$ReactRefreshHelpers$98a3.init();
 var prevRefreshReg = globalThis.$RefreshReg$;
