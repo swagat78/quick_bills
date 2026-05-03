@@ -5,11 +5,22 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
+import Alert from "react-bootstrap/Alert";
 import InvoiceItem from "./InvoiceItem";
 import InvoiceModal from "./InvoiceModal";
 import InputGroup from "react-bootstrap/InputGroup";
+import { useUpsertInvoice } from "../hooks/useUpsertInvoice";
 
 const InvoiceForm = () => {
+  // ── Supabase upsert hook ──
+  const {
+    upsertInvoice,
+    loading: saving,
+    error: saveError,
+    success: saveSuccess,
+  } = useUpsertInvoice();
+  const [invoiceId, setInvoiceId] = useState(null);
+
   const [isOpen, setIsOpen] = useState(false);
   const [currency, setCurrency] = useState("$");
   const [currentDate, setCurrentDate] = useState(
@@ -109,6 +120,35 @@ const InvoiceForm = () => {
 
   const closeModal = () => {
     setIsOpen(false);
+  };
+
+  // ── Save / Update invoice to Supabase ──
+  const handleSaveInvoice = async () => {
+    const formState = {
+      invoiceNumber,
+      currency,
+      dateOfIssue,
+      billFrom,
+      billFromEmail,
+      billFromAddress,
+      billTo,
+      billToEmail,
+      billToAddress,
+      items,
+      taxRate,
+      taxAmount,
+      discountRate,
+      discountAmount,
+      subTotal,
+      total,
+      notes,
+    };
+
+    const result = await upsertInvoice({ invoiceId, formState });
+
+    if (result?.id) {
+      setInvoiceId(result.id); // pin the ID for future updates
+    }
   };
 
   return (
@@ -361,6 +401,33 @@ const InvoiceForm = () => {
               </InputGroup>
             </Form.Group>
             <hr className="mt-4 mb-3" />
+
+            {/* ── Save Status Feedback ── */}
+            {saveError && (
+              <Alert variant="danger" className="mb-2" dismissible>
+                {saveError}
+              </Alert>
+            )}
+            {saveSuccess && (
+              <Alert variant="success" className="mb-2" dismissible>
+                Invoice saved successfully!
+              </Alert>
+            )}
+
+            {/* ── Save Invoice Button ── */}
+            <Button
+              variant="success"
+              className="d-block w-100 mb-2"
+              onClick={handleSaveInvoice}
+              disabled={saving}
+            >
+              {saving
+                ? "Saving..."
+                : invoiceId
+                  ? "Update Invoice"
+                  : "Save Invoice"}
+            </Button>
+
             <Button
               variant="primary"
               type="submit"
