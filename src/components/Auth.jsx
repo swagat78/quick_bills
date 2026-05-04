@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
+import toast from "react-hot-toast";
 import "./Auth.css";
 
 const Auth = () => {
@@ -21,7 +22,7 @@ const Auth = () => {
           password,
         });
         if (error) throw error;
-        alert("Verification email sent! Check your inbox.");
+        toast.success("Verification email sent! Check your inbox.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,

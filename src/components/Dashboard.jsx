@@ -2,7 +2,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import { supabase } from "../supabaseClient";
 import { Container, Table, Button, Badge, Spinner, Dropdown, ButtonGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { BiPlus, BiFile, BiShow, BiBarChartAlt2, BiDownload } from "react-icons/bi";
+import { BiPlus, BiFile, BiShow, BiBarChartAlt2, BiDownload, BiLink } from "react-icons/bi";
+import toast from "react-hot-toast";
 import { exportAsCSV, exportAsExcel } from "../utils/exportInvoices";
 import useDebounce from "../hooks/useDebounce";
 import DashboardFilters from "./DashboardFilters";
@@ -106,10 +107,38 @@ const Dashboard = () => {
       } else {
         await exportAsExcel();
       }
+      toast.success(`Exported as ${format.toUpperCase()} successfully!`);
     } catch (err) {
-      alert(err.message || "Export failed.");
+      toast.error(err.message || "Export failed.");
     } finally {
       setExporting(false);
+    }
+  };
+
+  // ── Share invoice link ──
+  const handleShare = async (invoiceId) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return toast.error("You must be logged in.");
+
+      const res = await fetch(`http://localhost:3001/api/invoice/${invoiceId}/share`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      const result = await res.json();
+      if (!res.ok || !result.success) {
+        throw new Error(result.error || "Failed to generate share link.");
+      }
+
+      const shareUrl = `${window.location.origin}/invoice/public/${result.token}`;
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("Share link copied to clipboard!");
+    } catch (err) {
+      toast.error(err.message || "Failed to share.");
     }
   };
 
@@ -136,12 +165,12 @@ const Dashboard = () => {
   return (
     <Container className="py-5">
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-flex justify-content-between align-items-center mb-4 dash-header">
         <div>
           <h2 className="fw-bold">Your Invoices</h2>
-          <p className="text-muted">Manage and track all your bills in one place.</p>
+          <p className="text-muted mb-0">Manage and track all your bills in one place.</p>
         </div>
-        <div className="d-flex gap-2 flex-wrap">
+        <div className="d-flex gap-2 flex-wrap dash-actions">
           <Dropdown as={ButtonGroup}>
             <Button
               variant="outline-secondary"
@@ -171,14 +200,14 @@ const Dashboard = () => {
             className="d-flex align-items-center gap-2 px-3 py-2"
             onClick={() => navigate("/analytics")}
           >
-            <BiBarChartAlt2 size={20} /> Business Health
+            <BiBarChartAlt2 size={20} /> <span className="d-none d-sm-inline">Business Health</span><span className="d-sm-none">Health</span>
           </Button>
           <Button 
             variant="primary" 
             className="d-flex align-items-center gap-2 px-3 py-2 shadow-sm"
             onClick={() => navigate("/create")}
           >
-            <BiPlus size={20} /> New Invoice
+            <BiPlus size={20} /> <span className="d-none d-sm-inline">New Invoice</span><span className="d-sm-none">New</span>
           </Button>
         </div>
       </div>
@@ -220,48 +249,102 @@ const Dashboard = () => {
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-4 shadow-sm overflow-hidden border">
-          <Table responsive hover className="mb-0 align-middle">
-            <thead className="bg-light">
-              <tr>
-                <th className="px-4 py-3 text-uppercase small fw-bold text-muted">Invoice #</th>
-                <th className="py-3 text-uppercase small fw-bold text-muted">Billed To</th>
-                <th className="py-3 text-uppercase small fw-bold text-muted">Date</th>
-                <th className="py-3 text-uppercase small fw-bold text-muted">Amount</th>
-                <th className="py-3 text-uppercase small fw-bold text-muted">Status</th>
-                <th className="px-4 py-3 text-end text-uppercase small fw-bold text-muted">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoices.map((inv) => (
-                <tr key={inv.id}>
-                  <td className="px-4 fw-medium">INV-{inv.invoice_number}</td>
-                  <td>
-                    <div>{inv.bill_to || "No Name"}</div>
-                    <div className="small text-muted">{inv.bill_to_email}</div>
-                  </td>
-                  <td>{inv.date_of_issue ? new Date(inv.date_of_issue).toLocaleDateString() : "—"}</td>
-                  <td className="fw-bold">
-                    {inv.currency}{inv.total}
-                  </td>
-                  <td>{getStatusBadge(inv.status)}</td>
-                  <td className="px-4 text-end">
-                    <Button variant="light" size="sm" className="me-2">
-                      <BiShow />
-                    </Button>
-                    <Button 
-                      variant="outline-secondary" 
-                      size="sm"
-                      onClick={() => navigate(`/create?id=${inv.id}`)}
-                    >
-                      Edit
-                    </Button>
-                  </td>
+        <>
+          {/* ── Desktop Table ── */}
+          <div className="bg-white rounded-4 shadow-sm overflow-hidden border invoice-desktop-table">
+            <Table responsive hover className="mb-0 align-middle">
+              <thead className="bg-light">
+                <tr>
+                  <th className="px-4 py-3 text-uppercase small fw-bold text-muted">Invoice #</th>
+                  <th className="py-3 text-uppercase small fw-bold text-muted">Billed To</th>
+                  <th className="py-3 text-uppercase small fw-bold text-muted d-none d-md-table-cell">Date</th>
+                  <th className="py-3 text-uppercase small fw-bold text-muted">Amount</th>
+                  <th className="py-3 text-uppercase small fw-bold text-muted">Status</th>
+                  <th className="px-4 py-3 text-end text-uppercase small fw-bold text-muted">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
-        </div>
+              </thead>
+              <tbody>
+                {invoices.map((inv) => (
+                  <tr key={inv.id}>
+                    <td className="px-4 fw-medium">INV-{inv.invoice_number}</td>
+                    <td>
+                      <div>{inv.bill_to || "No Name"}</div>
+                      <div className="small text-muted d-none d-lg-block">{inv.bill_to_email}</div>
+                    </td>
+                    <td className="d-none d-md-table-cell">{inv.date_of_issue ? new Date(inv.date_of_issue).toLocaleDateString() : "—"}</td>
+                    <td className="fw-bold">
+                      {inv.currency}{inv.total}
+                    </td>
+                    <td>{getStatusBadge(inv.status)}</td>
+                    <td className="px-4 text-end">
+                      <Button
+                        variant="light"
+                        size="sm"
+                        className="me-1"
+                        title="Share public link"
+                        onClick={() => handleShare(inv.id)}
+                      >
+                        <BiLink />
+                      </Button>
+                      <Button variant="light" size="sm" className="me-1">
+                        <BiShow />
+                      </Button>
+                      <Button 
+                        variant="outline-secondary" 
+                        size="sm"
+                        onClick={() => navigate(`/create?id=${inv.id}`)}
+                      >
+                        Edit
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+
+          {/* ── Mobile Cards ── */}
+          <div className="invoice-mobile-cards">
+            {invoices.map((inv) => (
+              <div className="invoice-card-item" key={inv.id}>
+                <div className="invoice-card-header">
+                  <span className="invoice-card-id">INV-{inv.invoice_number}</span>
+                  {getStatusBadge(inv.status)}
+                </div>
+                <div className="invoice-card-body">
+                  <div className="invoice-card-field">
+                    <span className="invoice-card-label">Client</span>
+                    <span className="invoice-card-value">{inv.bill_to || "No Name"}</span>
+                  </div>
+                  <div className="invoice-card-field">
+                    <span className="invoice-card-label">Amount</span>
+                    <span className="invoice-card-value amount">{inv.currency}{inv.total}</span>
+                  </div>
+                  <div className="invoice-card-field">
+                    <span className="invoice-card-label">Date</span>
+                    <span className="invoice-card-value">
+                      {inv.date_of_issue ? new Date(inv.date_of_issue).toLocaleDateString() : "—"}
+                    </span>
+                  </div>
+                  <div className="invoice-card-field">
+                    <span className="invoice-card-label">Email</span>
+                    <span className="invoice-card-value" style={{ fontSize: '0.8rem' }}>
+                      {inv.bill_to_email || "—"}
+                    </span>
+                  </div>
+                </div>
+                <div className="invoice-card-actions">
+                  <Button variant="light" size="sm" onClick={() => handleShare(inv.id)}>
+                    <BiLink className="me-1" /> Share
+                  </Button>
+                  <Button variant="outline-secondary" size="sm" onClick={() => navigate(`/create?id=${inv.id}`)}>
+                    Edit
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </Container>
   );

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
@@ -7,6 +8,7 @@ import InvoiceForm from "./components/InvoiceForm";
 import Auth from "./components/Auth";
 import Dashboard from "./components/Dashboard";
 import BusinessHealth from "./components/BusinessHealth";
+import PublicInvoice from "./components/PublicInvoice";
 import { supabase } from "./supabaseClient";
 
 // 🛡️ Middleware-style Protected Route component
@@ -70,6 +72,9 @@ const App = () => {
         )}
 
         <Routes>
+          {/* Public route — no auth needed */}
+          <Route path="/invoice/public/:token" element={<PublicInvoice />} />
+
           <Route 
             path="/login" 
             element={!session ? <Auth /> : <Navigate to="/dashboard" replace />} 
@@ -104,6 +109,31 @@ const App = () => {
 
           <Route path="/" element={<Navigate to={session ? "/dashboard" : "/login"} replace />} />
         </Routes>
+
+        {/* Global Toast Notifications */}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#2d3436',
+              color: '#fff',
+              borderRadius: '12px',
+              padding: '12px 20px',
+              fontSize: '0.9rem',
+              fontWeight: 500,
+              boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+            },
+            success: {
+              iconTheme: { primary: '#00b894', secondary: '#fff' },
+              duration: 3000,
+            },
+            error: {
+              iconTheme: { primary: '#d63031', secondary: '#fff' },
+              duration: 4000,
+            },
+          }}
+        />
       </div>
     </Router>
   );

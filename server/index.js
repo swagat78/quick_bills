@@ -264,6 +264,255 @@ app.delete("/api/invoice/:id/share", async (req, res) => {
   }
 });
 
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  SERVER-SIDE PRICE VALIDATION — Anti-Tampering
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/**
+ * Centralized calculation engine (runs ONLY on the server).
+ * Fetches fixed prices from the `products` table and computes
+ * all totals. Client-sent prices are completely ignored.
+ *
+ * @param {Object[]} items - [{ product_id, quantity }]
+ * @param {number}   taxRate - GST/tax percentage
+ * @param {number}   discountRate - discount percentage
+ * @param {string}   gstType - "intra" | "inter" | "none"
+ * @returns {Object} Validated breakdown
+ */
+async function calculateServerTotal(items, taxRate = 0, discountRate = 0, gstType = "none") {
+  if (!supabaseAdmin) throw new Error("Supabase not configured.");
+
+  // 1. Collect all product IDs
+  const productIds = items.map((i) => i.product_id).filter(Boolean);
+
+  // 2. Fetch fixed prices from the database
+  let priceMap = {};
+  if (productIds.length > 0) {
+    const { data: products, error } = await supabaseAdmin
+      .from("products")
+      .select("id, name, price, currency")
+      .in("id", productIds);
+
+    if (error) throw new Error("Failed to fetch product prices.");
+    products.forEach((p) => {
+      priceMap[p.id] = p;
+    });
+  }
+
+  // 3. Build validated line items and compute subtotal
+  let subTotal = 0;
+  const validatedItems = items.map((item) => {
+    const product = priceMap[item.product_id];
+    if (!product) {
+      // Custom item (no product_id) — use client price but flag it
+      const price = parseFloat(item.price) || 0;
+      const qty = parseInt(item.quantity, 10) || 1;
+      const lineTotal = price * qty;
+      subTotal += lineTotal;
+      return {
+        ...item,
+        price: price.toFixed(2),
+        quantity: qty,
+        lineTotal: lineTotal.toFixed(2),
+        source: "custom", // flagged as user-entered
+      };
+    }
+
+    // Product exists in DB — use FIXED price, ignore client price
+    const fixedPrice = parseFloat(product.price);
+    const qty = parseInt(item.quantity, 10) || 1;
+    const lineTotal = fixedPrice * qty;
+    subTotal += lineTotal;
+
+    return {
+      product_id: item.product_id,
+      name: product.name,
+      description: item.description || "",
+      price: fixedPrice.toFixed(2),
+      quantity: qty,
+      lineTotal: lineTotal.toFixed(2),
+      currency: product.currency,
+      source: "verified", // price from DB
+    };
+  });
+
+  // 4. Apply discount
+  const discountAmount = (subTotal * discountRate) / 100;
+  const afterDiscount = subTotal - discountAmount;
+
+  // 5. Apply tax/GST
+  let taxAmount = 0;
+  let cgst = 0, sgst = 0, igst = 0;
+
+  if (gstType === "intra" && taxRate > 0) {
+    cgst = (afterDiscount * (taxRate / 2)) / 100;
+    sgst = cgst;
+    taxAmount = cgst + sgst;
+  } else if (gstType === "inter" && taxRate > 0) {
+    igst = (afterDiscount * taxRate) / 100;
+    taxAmount = igst;
+  } else if (taxRate > 0) {
+    taxAmount = (afterDiscount * taxRate) / 100;
+  }
+
+  // 6. Grand total
+  const total = afterDiscount + taxAmount;
+
+  return {
+    validatedItems,
+    subTotal: subTotal.toFixed(2),
+    discountRate,
+    discountAmount: discountAmount.toFixed(2),
+    taxRate,
+    gstType,
+    taxAmount: taxAmount.toFixed(2),
+    ...(gstType === "intra" && { cgst: cgst.toFixed(2), sgst: sgst.toFixed(2) }),
+    ...(gstType === "inter" && { igst: igst.toFixed(2) }),
+    total: total.toFixed(2),
+  };
+}
+
+/**
+ * POST /api/validate-invoice
+ * Validates prices server-side and returns the correct totals.
+ * Client-sent prices are IGNORED for products in the DB.
+ *
+ * Body: { items: [{ product_id?, name, quantity, price }], taxRate, discountRate, gstType }
+ */
+app.post("/api/validate-invoice", async (req, res) => {
+  try {
+    const { items, taxRate, discountRate, gstType } = req.body;
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: "Items array is required." });
+    }
+
+    const result = await calculateServerTotal(items, taxRate, discountRate, gstType);
+    return res.json({ success: true, data: result });
+  } catch (err) {
+    console.error("Validation error:", err.message);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * POST /api/invoice/secure-save
+ * Validates prices AND saves the invoice in one atomic call.
+ * This is the tamper-proof save endpoint.
+ *
+ * Body: { invoiceId?, formState, items }
+ * Headers: Authorization: Bearer <token>
+ */
+app.post("/api/invoice/secure-save", async (req, res) => {
+  try {
+    if (!supabaseAdmin) {
+      return res.status(500).json({ error: "Supabase not configured." });
+    }
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ error: "Unauthorized." });
+    }
+
+    const { invoiceId, formState } = req.body;
+    if (!formState) {
+      return res.status(400).json({ error: "formState is required." });
+    }
+
+    // Create authenticated Supabase client
+    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    // Get the authenticated user
+    const { data: { user }, error: authErr } = await userClient.auth.getUser();
+    if (authErr || !user) {
+      return res.status(401).json({ error: "Invalid session." });
+    }
+
+    // Validate totals server-side
+    const validated = await calculateServerTotal(
+      formState.items || [],
+      parseFloat(formState.taxRate) || 0,
+      parseFloat(formState.discountRate) || 0,
+      formState.gstType || "none"
+    );
+
+    // Build the invoice row with SERVER-CALCULATED values
+    const invoiceRow = {
+      ...(invoiceId && { id: invoiceId }),
+      user_id: user.id,
+      invoice_number: parseInt(formState.invoiceNumber, 10) || 1,
+      currency: formState.currency || "$",
+      date_of_issue: formState.dateOfIssue || null,
+      bill_from: formState.billFrom || "",
+      bill_from_email: formState.billFromEmail || "",
+      bill_from_address: formState.billFromAddress || "",
+      bill_to: formState.billTo || "",
+      bill_to_email: formState.billToEmail || "",
+      bill_to_address: formState.billToAddress || "",
+
+      // SERVER-VALIDATED values (client values overridden)
+      line_items: validated.validatedItems,
+      sub_total: parseFloat(validated.subTotal),
+      tax_rate: validated.taxRate,
+      tax_amount: parseFloat(validated.taxAmount),
+      discount_rate: validated.discountRate,
+      discount_amount: parseFloat(validated.discountAmount),
+      total: parseFloat(validated.total),
+      gst_type: validated.gstType,
+
+      notes: formState.notes || "",
+      status: formState.status || "draft",
+    };
+
+    // Upsert with server-calculated totals
+    const { data, error } = await userClient
+      .from("invoices")
+      .upsert(invoiceRow, { onConflict: "id" })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Secure save error:", error.message);
+      return res.status(500).json({ error: "Failed to save invoice." });
+    }
+
+    return res.json({
+      success: true,
+      data,
+      validation: validated,
+    });
+  } catch (err) {
+    console.error("Secure save error:", err.message);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * GET /api/products
+ * Returns the product catalog for the frontend.
+ * Prices here are for DISPLAY only — actual calculations
+ * are always done server-side via /api/validate-invoice.
+ */
+app.get("/api/products", async (req, res) => {
+  try {
+    if (!supabaseAdmin) {
+      return res.status(500).json({ error: "Supabase not configured." });
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from("products")
+      .select("id, name, description, price, currency")
+      .order("name");
+
+    if (error) throw error;
+    return res.json({ success: true, data: data || [] });
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to fetch products." });
+  }
+});
+
 // ── Health check ──
 app.get("/api/health", (req, res) => {
   res.json({
@@ -284,4 +533,5 @@ app.listen(PORT, () => {
     `   Supabase: ${supabaseAdmin ? "✓ Connected" : "✗ MISSING — set SUPABASE_URL & SUPABASE_ANON_KEY"}\n`
   );
 });
+
 

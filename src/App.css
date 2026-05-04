@@ -1,88 +1,249 @@
+/* ============================================
+   QUICKBILLS — Global Styles + Responsive
+   ============================================ */
+
+/* ── Base ── */
 body, html {
   font-size: 0.9rem;
-  background: #f2f3f7
+  background: #f2f3f7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 body, .form-control {
-  font-size: 0.9rem
+  font-size: 0.9rem;
 }
-body,
-html,
-#root,
-.App {
-  min-height: 100vh
+body, html, #root, .App {
+  min-height: 100vh;
 }
+
+/* ── Buttons ── */
 .btn {
   font-size: 0.9rem;
   font-weight: 500;
   padding: 0.66rem;
   border-radius: 0.5rem;
-  box-shadow: 0 .1rem .1rem rgba(0,0,0,.05)!important
+  box-shadow: 0 .1rem .1rem rgba(0,0,0,.05)!important;
 }
-.App-link {
-  color: #61dafb;
-}
+.btn-light { border-color: #dedede; }
+.btn-light:hover { border-color: #dedede; background-color: #f3f3f3; }
 
-.btn-light {
-  border-color: #dedede
-}
-
-.btn-light:hover {
-  border-color: #dedede;
-  background-color: #f3f3f3
-}
-
-.shadow {
-  box-shadow: 0 .1rem .1rem rgba(0,0,0,.05)!important
-}
-
-.modal-content,
-.card {
+/* ── Cards & Modals ── */
+.shadow { box-shadow: 0 .1rem .1rem rgba(0,0,0,.05)!important; }
+.modal-content, .card {
   overflow: hidden;
-  border-radius: 0.756rem
+  border-radius: 0.756rem;
 }
 
-hr {
-  opacity: 0.1
-}
+hr { opacity: 0.1; }
 
+/* ── Tables ── */
 .table th {
   border-top: 1px solid #0000001a;
   border-bottom: 1px solid #0000001a;
-  border-bottom-color: #0000001a!important
+  border-bottom-color: #0000001a!important;
 }
-.table td {
-   text-align: left;
-}
-.table tr th:first-child,
-.table tr td:first-child {
-  padding-left: 0
-}
-.table tr th:last-child,
-.table tr td:last-child {
-  padding-right: 0
-}
+.table td { text-align: left; }
+.table tr th:first-child, .table tr td:first-child { padding-left: 0; }
+.table tr th:last-child, .table tr td:last-child { padding-right: 0; }
 
+/* ── Forms ── */
 .form-control {
   background: #f5f7f9;
   font-weight: 400;
   padding: .5rem .75rem;
-  border: none
+  border: none;
 }
-.form-control:hover {
-  background: #f5f7f9;
-}
+.form-control:hover { background: #f5f7f9; }
 .form-control::placeholder,
 .form-control::-ms-input-placeholder,
-.form-control:-ms-input-placeholder {
-  color: #9fa8b0
-}
-.form-control:focus {
-  background: #f5f7f9;
-}
+.form-control:-ms-input-placeholder { color: #9fa8b0; }
+.form-control:focus { background: #f5f7f9; }
 
+/* ── Invoice Capture ── */
 #invoiceCapture {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+/* ============================================
+   MOBILE INVOICE CARDS (Dashboard)
+   Shows card layout on mobile, table on desktop
+   ============================================ */
+
+.invoice-mobile-cards {
+  display: none;
+}
+
+.invoice-card-item {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.invoice-card-item:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.invoice-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.invoice-card-id {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #2d3436;
+}
+
+.invoice-card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.invoice-card-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.invoice-card-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #b2bec3;
+  font-weight: 700;
+}
+
+.invoice-card-value {
+  font-size: 0.9rem;
+  color: #2d3436;
+  font-weight: 500;
+}
+
+.invoice-card-value.amount {
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.invoice-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.invoice-card-actions .btn {
+  flex: 1;
+  font-size: 0.8rem;
+  padding: 0.4rem;
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+/* ── Tablet (768px) ── */
+@media (max-width: 768px) {
+  body, html { font-size: 0.85rem; }
+
+  /* Navbar */
+  .navbar .container { padding: 0 0.75rem; }
+  .navbar-brand { font-size: 1.1rem !important; }
+
+  /* Dashboard header: stack vertically */
+  .dash-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem;
+  }
+  .dash-header .d-flex.gap-2 {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .dash-header .d-flex.gap-2 .btn {
+    flex: 1;
+    min-width: 120px;
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  /* Container */
+  .container { padding: 0 1rem; }
+  .py-5 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+
+  /* Invoice Form: full width sidebar */
+  .card.p-4.p-xl-5 { padding: 1.25rem !important; }
+
+  /* Table horizontal scroll */
+  .table-responsive { margin: 0 -0.5rem; }
+}
+
+/* ── Mobile (576px) ── */
+@media (max-width: 576px) {
+  body, html { font-size: 0.82rem; }
+
+  /* Navbar compact */
+  .navbar { padding: 0.5rem 0.75rem !important; }
+  .navbar-brand { font-size: 1rem !important; }
+  .navbar .btn { font-size: 0.75rem; padding: 0.35rem 0.65rem; }
+  .navbar .text-muted.small { display: none !important; }
+
+  /* Dashboard */
+  .py-5 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+  h2.fw-bold { font-size: 1.3rem; }
+
+  /* Show mobile cards, hide desktop table */
+  .invoice-mobile-cards { display: block; }
+  .invoice-desktop-table { display: none !important; }
+
+  /* Form adjustments */
+  .card.p-4.p-xl-5 { padding: 1rem !important; }
+  .card .row { margin: 0; }
+  .card .col-md-8, .card .col-md-4 { padding: 0; }
+
+  /* Buttons: full width on mobile */
+  .dash-actions {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .dash-actions .btn {
+    font-size: 0.78rem;
+    padding: 0.5rem;
+    justify-content: center;
+  }
+  .dash-actions .btn-group { grid-column: span 2; }
+
+  /* AI Prompt bar: smaller */
+  .ai-prompt-input { font-size: 0.82rem; }
+  .ai-prompt-btn { padding: 8px 14px; font-size: 0.75rem; }
+
+  /* Modal fullscreen on mobile */
+  .modal-dialog {
+    margin: 0;
+    max-width: 100%;
+    min-height: 100vh;
+  }
+  .modal-content { border-radius: 0; min-height: 100vh; }
+}
+
+/* ── Small phones (400px) ── */
+@media (max-width: 400px) {
+  .dash-actions {
+    grid-template-columns: 1fr;
+  }
+  .dash-actions .btn-group { grid-column: span 1; }
+
+  .invoice-card-body {
+    grid-template-columns: 1fr;
+  }
 }

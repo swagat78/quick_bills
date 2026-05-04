@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
+import toast from "react-hot-toast";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
-import Alert from "react-bootstrap/Alert";
 import InvoiceItem from "./InvoiceItem";
 import InvoiceModal from "./InvoiceModal";
 import InputGroup from "react-bootstrap/InputGroup";
@@ -14,6 +14,8 @@ import { useUpsertInvoice } from "../hooks/useUpsertInvoice";
 import { supabase } from "../supabaseClient";
 import { calculateGST, GST_SLABS } from "../utils/gstCalculator";
 import AIPrompt from "./AIPrompt";
+import { useUserProfile, CURRENCY_OPTIONS } from "../hooks/useUserProfile";
+import { useSecureInvoice } from "../hooks/useSecureInvoice";
 
 const InvoiceForm = () => {
   // ── Supabase upsert hook ──
@@ -23,12 +25,15 @@ const InvoiceForm = () => {
     error: saveError,
     success: saveSuccess,
   } = useUpsertInvoice();
+  const { profile, userId, updateProfile } = useUserProfile();
+  const { secureSave, validating: secureValidating, validated: serverValidated } = useSecureInvoice();
   const [invoiceId, setInvoiceId] = useState(null);
+  const [isOwner, setIsOwner] = useState(true); // default true for new invoices
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [currency, setCurrency] = useState("$");
+  const [currency, setCurrency] = useState("₹");
   const [currentDate, setCurrentDate] = useState(
     new Date().toLocaleDateString()
   );
@@ -40,9 +45,7 @@ const InvoiceForm = () => {
   const [billFrom, setBillFrom] = useState("");
   const [billFromEmail, setBillFromEmail] = useState("");
   const [billFromAddress, setBillFromAddress] = useState("");
-  const [notes, setNotes] = useState(
-    "Thank you for doing business with us. Have a great day!"
-  );
+  const [notes, setNotes] = useState("");
   const [total, setTotal] = useState("0.00");
   const [subTotal, setSubTotal] = useState("0.00");
   const [taxRate, setTaxRate] = useState("");
@@ -102,6 +105,19 @@ const InvoiceForm = () => {
     }
   }, [searchParams]);
 
+  // Set defaults from user profile for NEW invoices
+  useEffect(() => {
+    const editId = searchParams.get("id");
+    if (!editId && profile) {
+      if (profile.default_notes && !notes) {
+        setNotes(profile.default_notes);
+      }
+      if (profile.currency) {
+        setCurrency(profile.currency);
+      }
+    }
+  }, [profile, searchParams]);
+
   const loadInvoice = async (id) => {
     try {
       const { data, error } = await supabase
@@ -129,6 +145,10 @@ const InvoiceForm = () => {
         setStatus(data.status || "draft");
         // Restore GST type if stored in notes or default to "none"
         if (data.gst_type) setGstType(data.gst_type);
+
+        // Ownership check: is the current user the invoice owner?
+        const { data: { user } } = await supabase.auth.getUser();
+        setIsOwner(user?.id === data.user_id);
       }
     } catch (err) {
       console.error("Error loading invoice:", err.message);
@@ -178,7 +198,7 @@ const InvoiceForm = () => {
     setIsOpen(false);
   };
 
-  // ── Save / Update invoice to Supabase ──
+  // ── Save / Update invoice to Supabase (SERVER-VALIDATED) ──
   const handleSaveInvoice = async () => {
     const formState = {
       invoiceNumber,
@@ -199,12 +219,23 @@ const InvoiceForm = () => {
       total,
       notes,
       status,
+      gstType,
     };
 
-    const result = await upsertInvoice({ invoiceId, formState });
+    // Use server-side validated save (prices verified from DB)
+    const result = await secureSave({ invoiceId, formState });
 
     if (result?.id) {
-      setInvoiceId(result.id); // pin the ID for future updates
+      setInvoiceId(result.id);
+      // Update local state with server-validated totals
+      if (serverValidated) {
+        setSubTotal(serverValidated.subTotal);
+        setTaxAmount(serverValidated.taxAmount);
+        setTotal(serverValidated.total);
+      }
+      toast.success(invoiceId ? "Invoice updated! (Server verified ✓)" : "Invoice saved! (Server verified ✓)");
+    } else {
+      toast.error(saveError || "Failed to save invoice.");
     }
   };
 
@@ -232,8 +263,8 @@ const InvoiceForm = () => {
     if (aiData.gstType) setGstType(aiData.gstType);
     if (aiData.discountRate !== undefined) setDiscountRate(aiData.discountRate);
 
-    // Currency
-    if (aiData.currency) setCurrency(aiData.currency);
+    // Currency — AI cannot override profile currency
+    // if (aiData.currency) setCurrency(aiData.currency);
 
     // Notes
     if (aiData.notes) setNotes(aiData.notes);
@@ -428,12 +459,38 @@ const InvoiceForm = () => {
                   <span className="fw-bold">
                     {currency}
                     {total || 0}
+                    {serverValidated && (
+                      <span
+                        className="ms-2 badge bg-success bg-opacity-10 text-success border border-success border-opacity-25"
+                        style={{ fontSize: '0.6rem', verticalAlign: 'middle' }}
+                      >
+                        ✓ Server Verified
+                      </span>
+                    )}
                   </span>
                 </div>
               </Col>
             </Row>
             <hr className="my-4" />
-            <Form.Label className="fw-bold">Notes:</Form.Label>
+            <div className="d-flex justify-content-between align-items-center mb-1">
+              <Form.Label className="fw-bold mb-0">Notes:</Form.Label>
+              {isOwner && (
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="text-muted p-0"
+                  style={{ fontSize: '0.75rem', textDecoration: 'none' }}
+                  onClick={async () => {
+                    const ok = await updateProfile({ default_notes: notes });
+                    if (ok) toast.success("Default note saved to your profile!");
+                    else toast.error("Failed to save default note.");
+                  }}
+                  disabled={!notes}
+                >
+                  ★ Save as Default
+                </Button>
+              )}
+            </div>
             <Form.Control
               placeholder="Thank you for doing business with us. Have a great day!"
               name="notes"
@@ -442,7 +499,14 @@ const InvoiceForm = () => {
               as="textarea"
               className="my-2"
               rows={1}
+              readOnly={!isOwner}
+              style={!isOwner ? { opacity: 0.7, cursor: 'not-allowed' } : {}}
             />
+            {!isOwner && (
+              <div className="text-muted" style={{ fontSize: '0.75rem' }}>
+                🔒 Read-only — you are not the owner of this invoice.
+              </div>
+            )}
           </Card>
         </Col>
         <Col md={4} lg={3}>
@@ -491,23 +555,42 @@ const InvoiceForm = () => {
 
             <Form.Group className="mb-3">
               <Form.Label className="fw-bold">Currency:</Form.Label>
-              <Form.Select
-                onChange={(e) => {
-                  setCurrency(e.target.value);
-                }}
-                className="btn btn-light my-1"
-                aria-label="Change Currency"
+              <div
+                className="d-flex align-items-center gap-2 px-3 py-2 rounded bg-light border"
+                style={{ fontSize: '0.9rem' }}
               >
-                <option value="$">USD (United States Dollar)</option>
-                <option value="£">GBP (British Pound Sterling)</option>
-                <option value="₹">INR (Indian Rupee)</option>
-                <option value="¥">JPY (Japanese Yen)</option>
-                <option value="$">CAD (Canadian Dollar)</option>
-                <option value="$">AUD (Australian Dollar)</option>
-                <option value="$">SGD (Singapore Dollar)</option>
-                <option value="¥">CNY (Chinese Renminbi)</option>
-                <option value="₿">BTC (Bitcoin)</option>
-              </Form.Select>
+                <span className="fw-bold" style={{ fontSize: '1.1rem' }}>{currency}</span>
+                <span className="text-muted">
+                  {CURRENCY_OPTIONS.find(c => c.symbol === currency)?.label || currency}
+                </span>
+                <span
+                  className="ms-auto badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25"
+                  style={{ fontSize: '0.65rem' }}
+                >
+                  🔒 Locked
+                </span>
+              </div>
+              <div className="mt-1 d-flex justify-content-end">
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="text-muted p-0"
+                  style={{ fontSize: '0.72rem', textDecoration: 'none' }}
+                  onClick={async () => {
+                    // Cycle through currencies or prompt
+                    const currentIdx = CURRENCY_OPTIONS.findIndex(c => c.symbol === currency);
+                    const nextIdx = (currentIdx + 1) % CURRENCY_OPTIONS.length;
+                    const nextCurrency = CURRENCY_OPTIONS[nextIdx].symbol;
+                    const ok = await updateProfile({ currency: nextCurrency });
+                    if (ok) {
+                      setCurrency(nextCurrency);
+                      toast.success(`Currency changed to ${CURRENCY_OPTIONS[nextIdx].label}`);
+                    }
+                  }}
+                >
+                  ⚙ Change in Settings
+                </Button>
+              </div>
             </Form.Group>
 
             {/* ── GST Type Selector ── */}
@@ -593,30 +676,20 @@ const InvoiceForm = () => {
             </Form.Group>
             <hr className="mt-4 mb-3" />
 
-            {/* ── Save Status Feedback ── */}
-            {saveError && (
-              <Alert variant="danger" className="mb-2" dismissible>
-                {saveError}
-              </Alert>
-            )}
-            {saveSuccess && (
-              <Alert variant="success" className="mb-2" dismissible>
-                Invoice saved successfully!
-              </Alert>
-            )}
-
-            {/* ── Save Invoice Button ── */}
+            {/* ── Save Invoice Button (Server-Validated) ── */}
             <Button
               variant="success"
               className="d-block w-100 mb-2"
               onClick={handleSaveInvoice}
-              disabled={saving}
+              disabled={saving || secureValidating}
             >
-              {saving
-                ? "Saving..."
-                : invoiceId
-                  ? "Update Invoice"
-                  : "Save Invoice"}
+              {secureValidating
+                ? "Validating & Saving..."
+                : saving
+                  ? "Saving..."
+                  : invoiceId
+                    ? "Update Invoice"
+                    : "Save Invoice"}
             </Button>
 
             <Button
