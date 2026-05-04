@@ -1,15 +1,6 @@
-/**
- * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- *  QuickBills — AI Invoice Backend (Gemini API Proxy)
- * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- *
- *  This Express server securely proxies requests to the
- *  Google Gemini API so the API key never touches the
- *  browser. Run with: node server/index.js
- */
-
 const express = require("express");
 const cors = require("cors");
+const crypto = require("crypto");
 
 const app = express();
 const PORT = 3001;
@@ -17,6 +8,14 @@ const PORT = 3001;
 // ── Middleware ──
 app.use(cors({ origin: "http://localhost:1234" }));
 app.use(express.json());
+
+// ── Supabase config (for public invoice sharing) ──
+const { createClient } = require("@supabase/supabase-js");
+const SUPABASE_URL = process.env.SUPABASE_URL || "";
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "";
+const supabaseAdmin = SUPABASE_URL && SUPABASE_ANON_KEY
+  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
 
 // ── Gemini API config ──
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -123,9 +122,155 @@ app.post("/api/ai-invoice", async (req, res) => {
   }
 });
 
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  INVOICE SHARING — Public Link System
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/**
+ * POST /api/invoice/:id/share
+ * Generates a share_token for the given invoice.
+ * Requires the auth token in the Authorization header.
+ */
+app.post("/api/invoice/:id/share", async (req, res) => {
+  try {
+    if (!supabaseAdmin) {
+      return res.status(500).json({ error: "Supabase not configured on server." });
+    }
+
+    const { id } = req.params;
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      return res.status(401).json({ error: "Unauthorized." });
+    }
+
+    // Verify the user owns this invoice by using their token
+    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const { data: invoice, error: fetchErr } = await userClient
+      .from("invoices")
+      .select("id, share_token")
+      .eq("id", id)
+      .single();
+
+    if (fetchErr || !invoice) {
+      return res.status(404).json({ error: "Invoice not found." });
+    }
+
+    // If already shared, return existing token
+    if (invoice.share_token) {
+      return res.json({ success: true, token: invoice.share_token });
+    }
+
+    // Generate a new token
+    const token = crypto.randomUUID();
+
+    const { error: updateErr } = await userClient
+      .from("invoices")
+      .update({ share_token: token })
+      .eq("id", id);
+
+    if (updateErr) {
+      console.error("Share token update error:", updateErr.message);
+      return res.status(500).json({ error: "Failed to generate share link." });
+    }
+
+    return res.json({ success: true, token });
+  } catch (err) {
+    console.error("Share error:", err.message);
+    return res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+/**
+ * GET /api/public/invoice/:token
+ * Fetches a single invoice by its share_token.
+ * No authentication required — this is the public endpoint.
+ * Only returns read-only safe fields.
+ */
+app.get("/api/public/invoice/:token", async (req, res) => {
+  try {
+    if (!supabaseAdmin) {
+      return res.status(500).json({ error: "Supabase not configured." });
+    }
+
+    const { token } = req.params;
+
+    if (!token || token.length < 10) {
+      return res.status(400).json({ error: "Invalid share link." });
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from("invoices")
+      .select(
+        "invoice_number, status, currency, date_of_issue, " +
+        "bill_from, bill_from_email, bill_from_address, " +
+        "bill_to, bill_to_email, bill_to_address, " +
+        "line_items, sub_total, tax_rate, tax_amount, " +
+        "discount_rate, discount_amount, total, notes, gst_type"
+      )
+      .eq("share_token", token)
+      .single();
+
+    if (error || !data) {
+      return res.status(404).json({
+        error: "Invoice not found or sharing is disabled.",
+      });
+    }
+
+    // Never expose: id, user_id, share_token, created_at
+    return res.json({ success: true, data });
+  } catch (err) {
+    console.error("Public invoice error:", err.message);
+    return res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+/**
+ * DELETE /api/invoice/:id/share
+ * Revokes the share link for an invoice.
+ */
+app.delete("/api/invoice/:id/share", async (req, res) => {
+  try {
+    if (!supabaseAdmin) {
+      return res.status(500).json({ error: "Supabase not configured." });
+    }
+
+    const { id } = req.params;
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      return res.status(401).json({ error: "Unauthorized." });
+    }
+
+    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const { error } = await userClient
+      .from("invoices")
+      .update({ share_token: null })
+      .eq("id", id);
+
+    if (error) {
+      return res.status(500).json({ error: "Failed to revoke share link." });
+    }
+
+    return res.json({ success: true });
+  } catch (err) {
+    return res.status(500).json({ error: "Internal server error." });
+  }
+});
+
 // ── Health check ──
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", model: GEMINI_MODEL });
+  res.json({
+    status: "ok",
+    model: GEMINI_MODEL,
+    supabase: supabaseAdmin ? "connected" : "not configured",
+  });
 });
 
 // ── Start ──
@@ -133,6 +278,10 @@ app.listen(PORT, () => {
   console.log(`\n⚡ QuickBills AI Server running at http://localhost:${PORT}`);
   console.log(`   Model: ${GEMINI_MODEL}`);
   console.log(
-    `   API Key: ${GEMINI_API_KEY ? "✓ Configured" : "✗ MISSING — set GEMINI_API_KEY"}\n`
+    `   API Key: ${GEMINI_API_KEY ? "✓ Configured" : "✗ MISSING"}`
+  );
+  console.log(
+    `   Supabase: ${supabaseAdmin ? "✓ Connected" : "✗ MISSING — set SUPABASE_URL & SUPABASE_ANON_KEY"}\n`
   );
 });
+

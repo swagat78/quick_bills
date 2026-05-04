@@ -1,0 +1,305 @@
+/* ============================================
+   PUBLIC INVOICE VIEWER — Read-Only
+   ============================================ */
+
+.pub-wrapper {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding: 2rem 1rem;
+}
+
+.pub-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Header bar */
+.pub-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.pub-brand {
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #2d3436;
+}
+
+.pub-badge {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.pub-badge.paid {
+  background: rgba(0, 184, 148, 0.1);
+  color: #00b894;
+}
+
+.pub-badge.sent {
+  background: rgba(9, 132, 227, 0.1);
+  color: #0984e3;
+}
+
+.pub-badge.draft {
+  background: rgba(178, 190, 195, 0.15);
+  color: #636e72;
+}
+
+.pub-badge.overdue {
+  background: rgba(214, 48, 49, 0.1);
+  color: #d63031;
+}
+
+/* Invoice Card */
+.pub-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Watermark */
+.pub-watermark {
+  position: absolute;
+  top: 30%;
+  left: 10%;
+  font-size: 120px;
+  font-weight: 900;
+  color: rgba(0, 184, 148, 0.06);
+  transform: rotate(-35deg);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.pub-content {
+  position: relative;
+  z-index: 1;
+  padding: 2.5rem;
+}
+
+/* Header section */
+.pub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 3px solid #2d3436;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.pub-title {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #000;
+}
+
+.pub-subtitle {
+  font-size: 11px;
+  color: #636e72;
+  margin-top: 4px;
+}
+
+.pub-invoice-label {
+  font-size: 32px;
+  font-weight: 900;
+  color: #dfe6e9;
+  line-height: 1;
+  text-align: right;
+}
+
+.pub-invoice-num {
+  font-size: 12px;
+  color: #636e72;
+  margin-top: 6px;
+  text-align: right;
+}
+
+/* Info Grid */
+.pub-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 600px) {
+  .pub-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pub-info-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #636e72;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.pub-info-name {
+  font-weight: 700;
+  color: #2d3436;
+}
+
+.pub-info-detail {
+  font-size: 12px;
+  color: #636e72;
+  margin-top: 2px;
+}
+
+/* Items Table */
+.pub-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+.pub-table thead tr {
+  background: #2d3436;
+  color: #fff;
+}
+
+.pub-table th {
+  padding: 10px 14px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.pub-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+}
+
+.pub-item-name {
+  font-weight: 700;
+}
+
+.pub-item-desc {
+  font-size: 11px;
+  color: #636e72;
+}
+
+/* Totals */
+.pub-totals {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pub-totals-inner {
+  width: 280px;
+}
+
+.pub-total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.pub-total-label {
+  color: #636e72;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.pub-grand-total {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 14px;
+  margin-top: 10px;
+  border-top: 3px solid #2d3436;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+/* Notes */
+.pub-notes {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.pub-notes-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #636e72;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.pub-notes-text {
+  font-size: 12px;
+  color: #636e72;
+}
+
+/* Footer */
+.pub-footer {
+  text-align: center;
+  padding: 1rem 2.5rem 2rem;
+  font-size: 10px;
+  color: #b2bec3;
+}
+
+/* Loading / Error */
+.pub-loading,
+.pub-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: #636e72;
+}
+
+.pub-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e9ecef;
+  border-top: 3px solid #2d3436;
+  border-radius: 50%;
+  animation: pub-spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes pub-spin {
+  to { transform: rotate(360deg); }
+}
+
+.pub-error h3 {
+  font-weight: 800;
+  color: #2d3436;
+  margin-bottom: 0.5rem;
+}
+
+/* GST rows */
+.pub-gst-label {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.pub-gst-label.cgst,
+.pub-gst-label.sgst {
+  color: #00b894;
+}
+
+.pub-gst-label.igst {
+  color: #0984e3;
+}
