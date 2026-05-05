@@ -62,6 +62,7 @@ const InvoiceForm = () => {
   const [cgst, setCgst] = useState("0.00");
   const [sgst, setSgst] = useState("0.00");
   const [igst, setIgst] = useState("0.00");
+  const [isCustomTax, setIsCustomTax] = useState(false);
 
   const [items, setItems] = useState([
     {
@@ -148,6 +149,9 @@ const InvoiceForm = () => {
         setStatus(data.status || "draft");
         // Restore GST type if stored in notes or default to "none"
         if (data.gst_type) setGstType(data.gst_type);
+        
+        const rate = parseFloat(data.tax_rate) || 0;
+        setIsCustomTax(!GST_SLABS.includes(rate));
 
         // Ownership check: is the current user the invoice owner?
         const { data: { user } } = await supabase.auth.getUser();
@@ -623,12 +627,23 @@ const InvoiceForm = () => {
                           ? "primary"
                           : "outline-secondary"
                       }
-                      onClick={() => setTaxRate(slab)}
+                      onClick={() => {
+                        setTaxRate(slab);
+                        setIsCustomTax(false);
+                      }}
                       style={{ minWidth: "42px", fontSize: "0.75rem" }}
                     >
                       {slab}%
                     </Button>
                   ))}
+                  <Button
+                    size="sm"
+                    variant={isCustomTax ? "primary" : "outline-secondary"}
+                    onClick={() => setIsCustomTax(true)}
+                    style={{ minWidth: "42px", fontSize: "0.75rem" }}
+                  >
+                    Custom
+                  </Button>
                 </div>
               )}
               <InputGroup className="my-1 flex-nowrap">
@@ -642,6 +657,8 @@ const InvoiceForm = () => {
                   min="0.00"
                   step="0.01"
                   max="100.00"
+                  readOnly={!isCustomTax}
+                  style={!isCustomTax ? { backgroundColor: '#f8f9fa', cursor: 'not-allowed' } : {}}
                 />
                 <InputGroup.Text className="bg-light fw-bold text-secondary small">
                   %
