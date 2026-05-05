@@ -52,7 +52,7 @@ const PublicInvoice = () => {
 
   const items = invoice.line_items || [];
   const status = (invoice.status || "draft").toLowerCase();
-  const currency = invoice.currency || "$";
+  const currency = invoice.currency || "₹";
   const taxRate = parseFloat(invoice.tax_rate) || 0;
   const gstType = invoice.gst_type || "none";
 

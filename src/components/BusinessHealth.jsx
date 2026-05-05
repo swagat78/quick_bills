@@ -134,7 +134,7 @@ const BusinessHealth = () => {
           <div>
             Revenue:{" "}
             <span style={{ color: "#00cec9" }}>
-              ${payload[0].value.toLocaleString()}
+              ₹{payload[0].value.toLocaleString()}
             </span>
           </div>
         </div>
@@ -189,7 +189,7 @@ const BusinessHealth = () => {
       <div className="bh-kpi-grid">
         <div className="bh-kpi-card revenue">
           <div className="bh-kpi-label">Total Revenue</div>
-          <div className="bh-kpi-value">${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div className="bh-kpi-value">₹{totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
           <div className="bh-kpi-sub">Lifetime earnings</div>
         </div>
 
@@ -197,7 +197,7 @@ const BusinessHealth = () => {
           <div className="bh-kpi-label">Paid Invoices</div>
           <div className="bh-kpi-value">{paidInvoices.length}</div>
           <div className="bh-kpi-sub">
-            ${paidRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })} collected
+            ₹{paidRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })} collected
           </div>
         </div>
 
@@ -209,7 +209,7 @@ const BusinessHealth = () => {
 
         <div className="bh-kpi-card tax">
           <div className="bh-kpi-label">Tax Collected (FY)</div>
-          <div className="bh-kpi-value">${taxCollected.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div className="bh-kpi-value">₹{taxCollected.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
           <div className="bh-kpi-sub">Current fiscal year</div>
         </div>
       </div>
@@ -232,7 +232,7 @@ const BusinessHealth = () => {
                 tick={{ fontSize: 11, fill: "#636e72" }}
                 axisLine={false}
                 tickLine={false}
-                tickFormatter={(val) => `$${val}`}
+                tickFormatter={(val) => `₹${val}`}
               />
               <Tooltip content={<RevenueTooltip />} />
               <Line
@@ -293,7 +293,7 @@ const BusinessHealth = () => {
       <div className="bh-tax-card">
         <div className="bh-chart-title">Fiscal Year Tax Summary</div>
         <div className="bh-tax-value">
-          ${taxCollected.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+          ₹{taxCollected.toLocaleString(undefined, { minimumFractionDigits: 2 })}
         </div>
         <div className="bh-tax-label">
           Total tax collected from {paidInvoices.length} paid invoice

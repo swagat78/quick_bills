@@ -50,7 +50,7 @@ const flattenInvoice = (invoice) => {
     invoiceNumber: `INV-${invoice.invoice_number}`,
     status: (invoice.status || "draft").toUpperCase(),
     dateOfIssue: invoice.date_of_issue || "",
-    currency: invoice.currency || "$",
+    currency: invoice.currency || "₹",
     billFrom: invoice.bill_from || "",
     billFromEmail: invoice.bill_from_email || "",
     billFromAddress: invoice.bill_from_address || "",

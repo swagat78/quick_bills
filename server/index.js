@@ -443,7 +443,7 @@ app.post("/api/invoice/secure-save", async (req, res) => {
       ...(invoiceId && { id: invoiceId }),
       user_id: user.id,
       invoice_number: parseInt(formState.invoiceNumber, 10) || 1,
-      currency: formState.currency || "$",
+      currency: formState.currency || "₹",
       date_of_issue: formState.dateOfIssue || null,
       bill_from: formState.billFrom || "",
       bill_from_email: formState.billFromEmail || "",

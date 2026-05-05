@@ -558,7 +558,24 @@ const InvoiceForm = () => {
             </Form.Group>
 
             <Form.Group className="mb-4">
-              <Form.Label className="fw-bold">Currency:</Form.Label>
+              <div className="d-flex justify-content-between align-items-center mb-1">
+                <Form.Label className="fw-bold mb-0">Currency:</Form.Label>
+                {isOwner && (
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="text-muted p-0"
+                    style={{ fontSize: '0.75rem', textDecoration: 'none' }}
+                    onClick={async () => {
+                      const ok = await updateProfile({ currency: currency });
+                      if (ok) toast.success("Default currency saved to your profile!");
+                      else toast.error("Failed to save default currency.");
+                    }}
+                  >
+                    ★ Save as Default
+                  </Button>
+                )}
+              </div>
               <Form.Select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
