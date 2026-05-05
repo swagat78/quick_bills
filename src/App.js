@@ -33,28 +33,31 @@ const Navigation = ({ session, handleLogout, theme, toggleTheme }) => {
   if (!session) return null;
 
   return (
-    <Navbar bg="white" className="border-bottom px-4 py-3 sticky-top theme-navbar">
-      <Container>
-        <div className="d-flex align-items-center gap-3">
+    <Navbar bg="white" className="border-bottom px-3 py-1 sticky-top theme-navbar shadow-sm" style={{ minHeight: '50px' }}>
+      <Container className="d-flex align-items-center justify-content-between">
+        <div className="d-flex align-items-center gap-2">
           {showBack && (
             <Button 
               variant="light" 
               size="sm" 
-              className="d-flex align-items-center gap-1 text-muted border-0 bg-transparent dark:text-slate-300 dark:hover:text-white"
+              className="p-1 d-flex align-items-center justify-content-center rounded-circle border-0 bg-transparent text-muted dark:text-slate-400 dark:hover:bg-slate-800"
               onClick={() => navigate("/dashboard")}
-              style={{ fontSize: '0.9rem', fontWeight: 500 }}
+              title="Back to Dashboard"
             >
-              <BiChevronLeft size={20} /> Back to Dashboard
+              <BiChevronLeft size={22} />
             </Button>
           )}
-          {!showBack && (
-            <Navbar.Brand as={Link} to="/dashboard" className="fw-bold fs-4 text-primary m-0 p-0 dark:text-blue-400">
-              QuickBills
-            </Navbar.Brand>
-          )}
+          <Navbar.Brand 
+            as={Link} 
+            to="/dashboard" 
+            className="fw-bold text-primary m-0 p-0 dark:text-blue-400"
+            style={{ fontSize: '1.25rem', letterSpacing: '-0.5px' }}
+          >
+            QuickBills
+          </Navbar.Brand>
         </div>
         
-        <div className="d-flex align-items-center gap-2 gap-md-3">
+        <div className="d-flex align-items-center gap-2">
           <Button 
             variant="light" 
             size="sm" 
@@ -62,15 +65,32 @@ const Navigation = ({ session, handleLogout, theme, toggleTheme }) => {
             onClick={toggleTheme}
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
-            {theme === 'dark' ? <BiSun size={20} className="text-warning" /> : <BiMoon size={20} className="text-primary" />}
+            {theme === 'dark' ? <BiSun size={18} className="text-warning" /> : <BiMoon size={18} className="text-primary" />}
           </Button>
 
-          <span className="text-muted small d-none d-md-block dark:text-slate-400">
-            {session.user.email}
-          </span>
-          <Button variant="outline-danger" size="sm" onClick={handleLogout}>
-            Sign Out
-          </Button>
+          <Dropdown align="end">
+            <Dropdown.Toggle 
+              variant="light" 
+              size="sm" 
+              className="border-0 bg-transparent d-flex align-items-center gap-1 fw-medium text-muted dark:text-slate-300 dark:hover:bg-slate-800"
+              style={{ fontSize: '0.85rem' }}
+            >
+              Account
+            </Dropdown.Toggle>
+            <Dropdown.Menu className="shadow-lg border-0 dark:bg-slate-900 mt-2">
+              <div className="px-3 py-2 text-muted small border-bottom dark:border-slate-800">
+                <div className="fw-bold text-dark dark:text-slate-200">Logged in as</div>
+                <div className="text-truncate" style={{ maxWidth: '200px' }}>{session.user.email}</div>
+              </div>
+              <Dropdown.Item 
+                className="text-danger py-2" 
+                onClick={handleLogout}
+                style={{ fontSize: '0.9rem' }}
+              >
+                Sign Out
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
       </Container>
     </Navbar>

@@ -45,7 +45,6 @@ const InvoiceForm = () => {
   const [billFrom, setBillFrom] = useState("");
   const [billFromEmail, setBillFromEmail] = useState("");
   const [billFromAddress, setBillFromAddress] = useState("");
-  const [notes, setNotes] = useState("");
   const [total, setTotal] = useState("0.00");
   const [subTotal, setSubTotal] = useState("0.00");
   const [taxRate, setTaxRate] = useState("");
@@ -113,9 +112,6 @@ const InvoiceForm = () => {
   useEffect(() => {
     const editId = searchParams.get("id");
     if (!editId && profile) {
-      if (profile.default_notes && !notes) {
-        setNotes(profile.default_notes);
-      }
       if (profile.currency) {
         setCurrency(profile.currency);
       }
@@ -145,7 +141,6 @@ const InvoiceForm = () => {
         setItems(data.line_items);
         setTaxRate(data.tax_rate);
         setDiscountRate(data.discount_rate);
-        setNotes(data.notes);
         setStatus(data.status || "draft");
         // Restore GST type if stored in notes or default to "none"
         if (data.gst_type) setGstType(data.gst_type);
@@ -224,7 +219,6 @@ const InvoiceForm = () => {
       discountAmount,
       subTotal,
       total,
-      notes,
       status,
       gstType,
     };
@@ -272,9 +266,6 @@ const InvoiceForm = () => {
 
     // Currency — AI cannot override profile currency
     // if (aiData.currency) setCurrency(aiData.currency);
-
-    // Notes
-    if (aiData.notes) setNotes(aiData.notes);
   };
 
   return (
@@ -479,37 +470,6 @@ const InvoiceForm = () => {
                 </div>
               </Col>
             </Row>
-            <hr className="my-4" />
-            <div className="d-flex justify-content-between align-items-center mb-1">
-              <Form.Label className="fw-bold mb-0">Notes:</Form.Label>
-              {isOwner && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="text-muted p-0"
-                  style={{ fontSize: '0.75rem', textDecoration: 'none' }}
-                  onClick={async () => {
-                    const ok = await updateProfile({ default_notes: notes });
-                    if (ok) toast.success("Default note saved to your profile!");
-                    else toast.error("Failed to save default note.");
-                  }}
-                  disabled={!notes}
-                >
-                  ★ Save as Default
-                </Button>
-              )}
-            </div>
-            <Form.Control
-              placeholder="Thank you for doing business with us. Have a great day!"
-              name="notes"
-              value={notes}
-              onChange={handleChange(setNotes)}
-              as="textarea"
-              className="my-2 bg-light"
-              rows={1}
-              readOnly={true}
-              style={{ opacity: 0.8, cursor: 'not-allowed' }}
-            />
             {!isOwner && (
               <div className="text-muted" style={{ fontSize: '0.75rem' }}>
                 🔒 Read-only — you are not the owner of this invoice.
@@ -531,7 +491,6 @@ const InvoiceForm = () => {
                 billFrom,
                 billFromEmail,
                 billFromAddress,
-                notes,
               }}
               items={items}
               currency={currency}

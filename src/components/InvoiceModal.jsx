@@ -372,32 +372,7 @@ const InvoiceModal = ({
             </div>
           </div>
 
-          {/* Notes */}
-          {info.notes && (
-            <div
-              style={{
-                marginTop: "40px",
-                position: "relative",
-                zIndex: 1,
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "9px",
-                  textTransform: "uppercase",
-                  letterSpacing: "1.5px",
-                  color: "#636e72",
-                  fontWeight: 700,
-                  marginBottom: "6px",
-                }}
-              >
-                Notes & Terms
-              </div>
-              <div style={{ fontSize: "12px", color: "#636e72" }}>
-                {info.notes}
-              </div>
-            </div>
-          )}
+
 
           {/* Footer */}
           <div
