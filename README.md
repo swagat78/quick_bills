@@ -2,8 +2,6 @@
 
 QuickBills is a high-performance, production-ready SaaS platform designed for the modern business. Featuring an **Industrial Minimalist** aesthetic, it combines lightning-fast invoice generation with enterprise-grade features like AI-powered auto-fill and professional GST management.
 
-![QuickBills Header](https://via.placeholder.com/1200x400/020617/3b82f6?text=QuickBills:+Industrial+Minimalist+Invoicing)
-
 ## 🌐 Live Demo
 - **Frontend**: [quick-bills-ai.netlify.app](https://quick-bills-ai.netlify.app)
 - **Backend API**: [quick-bills.onrender.com](https://quick-bills.onrender.com)
@@ -44,20 +42,7 @@ QuickBills is a high-performance, production-ready SaaS platform designed for th
    cd server && npm install
    ```
 
-3. **Configure Environment Variables**:
-   Create a `.env` file in the root directory and the `/server` directory:
-   ```env
-   # Frontend .env
-   REACT_APP_SUPABASE_URL=your_supabase_url
-   REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key
-
-   # Backend .env
-   SUPABASE_URL=your_supabase_url
-   SUPABASE_ANON_KEY=your_supabase_anon_key
-   GEMINI_API_KEY=your_google_gemini_key
-   ```
-
-4. **Run the Application**:
+3. **Run the Application**:
    ```bash
    # From the root directory
    npm start
