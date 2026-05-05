@@ -65,7 +65,3 @@ QuickBills follows a modular component-based architecture:
 ## 🎨 Design Philosophy
 
 QuickBills is built on the principle of **"Hard Minimalist"** design. We eliminate unnecessary whitespace, use thin professional borders instead of shadows, and maintain a high-contrast dark palette to create a tool that feels less like a website and more like a piece of high-precision software.
-
----
-
-Built with 💙 by [Swagat](https://github.com/swagat78)
