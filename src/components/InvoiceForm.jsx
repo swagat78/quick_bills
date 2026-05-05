@@ -95,11 +95,11 @@ const InvoiceForm = () => {
     setIgst(gstResult.igst.toFixed(2));
     setTaxAmount(gstResult.totalTax.toFixed(2));
     setTotal(gstResult.total.toFixed(2));
-  }, [items, taxRate, discountRate, gstType]);
+  }, [items, taxRate, discountRate, gstType, currency]);
 
   useEffect(() => {
     handleCalculateTotal();
-  }, [handleCalculateTotal]);
+  }, [currency, handleCalculateTotal]);
 
   useEffect(() => {
     const id = searchParams.get("id");
