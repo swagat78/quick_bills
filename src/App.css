@@ -1,13 +1,30 @@
-/* ============================================
-   QUICKBILLS — Global Styles + Responsive
-   ============================================ */
+:root {
+  --bg-color: #f2f3f7;
+  --card-bg: #ffffff;
+  --text-main: #2d3436;
+  --text-muted: #636e72;
+  --border-color: #e9ecef;
+  --input-bg: #f5f7f9;
+  --navbar-bg: #ffffff;
+}
 
-/* ── Base ── */
+[data-theme='dark'] {
+  --bg-color: #0f172a;
+  --card-bg: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  --input-bg: #0f172a;
+  --navbar-bg: #1e293b;
+}
+
 body, html {
   font-size: 0.9rem;
-  background: #f2f3f7;
+  background: var(--bg-color);
+  color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 body, .form-control {
   font-size: 0.9rem;
@@ -32,6 +49,9 @@ body, html, #root, .App {
 .modal-content, .card {
   overflow: hidden;
   border-radius: 0.756rem;
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-main);
 }
 
 hr { opacity: 0.1; }
@@ -48,16 +68,18 @@ hr { opacity: 0.1; }
 
 /* ── Forms ── */
 .form-control {
-  background: #f5f7f9;
+  background: var(--input-bg);
+  color: var(--text-main);
   font-weight: 400;
   padding: .5rem .75rem;
-  border: none;
+  border: 1px solid var(--border-color);
 }
-.form-control:hover { background: #f5f7f9; }
-.form-control::placeholder,
-.form-control::-ms-input-placeholder,
-.form-control:-ms-input-placeholder { color: #9fa8b0; }
-.form-control:focus { background: #f5f7f9; }
+.form-control:hover, .form-control:focus { 
+  background: var(--input-bg); 
+  color: var(--text-main);
+  border-color: var(--text-muted);
+}
+.form-control::placeholder { color: var(--text-muted); opacity: 0.6; }
 
 /* ── Invoice Capture ── */
 #invoiceCapture {
@@ -77,8 +99,8 @@ hr { opacity: 0.1; }
 }
 
 .invoice-card-item {
-  background: #fff;
-  border: 1px solid #e9ecef;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 14px;
   padding: 1rem 1.25rem;
   margin-bottom: 0.75rem;
@@ -99,7 +121,7 @@ hr { opacity: 0.1; }
 .invoice-card-id {
   font-weight: 700;
   font-size: 0.95rem;
-  color: #2d3436;
+  color: var(--text-main);
 }
 
 .invoice-card-body {
@@ -118,13 +140,13 @@ hr { opacity: 0.1; }
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #b2bec3;
+  color: var(--text-muted);
   font-weight: 700;
 }
 
 .invoice-card-value {
   font-size: 0.9rem;
-  color: #2d3436;
+  color: var(--text-main);
   font-weight: 500;
 }
 

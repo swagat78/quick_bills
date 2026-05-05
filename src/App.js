@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavig
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { Button, Navbar, Container, Spinner, Nav } from "react-bootstrap";
-import { BiChevronLeft } from "react-icons/bi";
+import { BiChevronLeft, BiSun, BiMoon } from "react-icons/bi";
 import InvoiceForm from "./components/InvoiceForm";
 import Auth from "./components/Auth";
 import Dashboard from "./components/Dashboard";
@@ -21,7 +21,7 @@ const ProtectedRoute = ({ session, children }) => {
 };
 
 // ── Navigation Component (to access router hooks) ──
-const Navigation = ({ session, handleLogout }) => {
+const Navigation = ({ session, handleLogout, theme, toggleTheme }) => {
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -33,7 +33,7 @@ const Navigation = ({ session, handleLogout }) => {
   if (!session) return null;
 
   return (
-    <Navbar bg="white" className="border-bottom px-4 py-3 sticky-top">
+    <Navbar bg="white" className="border-bottom px-4 py-3 sticky-top theme-navbar">
       <Container>
         <div className="d-flex align-items-center gap-3">
           {showBack && (
@@ -54,7 +54,17 @@ const Navigation = ({ session, handleLogout }) => {
           )}
         </div>
         
-        <div className="d-flex align-items-center gap-3">
+        <div className="d-flex align-items-center gap-2 gap-md-3">
+          <Button 
+            variant="light" 
+            size="sm" 
+            className="rounded-circle p-2 d-flex align-items-center justify-content-center border-0 bg-transparent theme-toggle"
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {theme === 'dark' ? <BiSun size={20} className="text-warning" /> : <BiMoon size={20} className="text-primary" />}
+          </Button>
+
           <span className="text-muted small d-none d-md-block">
             {session.user.email}
           </span>
@@ -70,6 +80,16 @@ const Navigation = ({ session, handleLogout }) => {
 const App = () => {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   useEffect(() => {
     // Initial session check
@@ -101,7 +121,7 @@ const App = () => {
   return (
     <Router>
       <div className="App">
-        <Navigation session={session} handleLogout={handleLogout} />
+        <Navigation session={session} handleLogout={handleLogout} theme={theme} toggleTheme={toggleTheme} />
 
         <Routes>
           {/* Public route — no auth needed */}
