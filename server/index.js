@@ -3,7 +3,7 @@ const cors = require("cors");
 const crypto = require("crypto");
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 5000;
 
 // ── Middleware ──
 app.use(cors({ origin: "http://localhost:1234" }));
