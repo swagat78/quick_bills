@@ -54,7 +54,7 @@ const ItemRow = ({ item, onItemizedItemEdit, onDelEvent, currency, isLocked }) =
   };
 
   return (
-    <tr>
+    <tr className="transition-colors duration-200 hover:bg-black/5 dark:hover:bg-slate-800/30">
       <td style={{ width: "100%" }}>
         <EditableField
           onItemizedItemEdit={onItemizedItemEdit}

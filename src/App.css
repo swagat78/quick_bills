@@ -10,12 +10,12 @@
 
 [data-theme='dark'], .dark {
   --bg-color: #020617; /* bg-slate-950 */
-  --card-bg: #1e293b; /* bg-slate-800 */
+  --card-bg: #0f172a; /* bg-slate-900 */
   --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --border-color: #334155; /* border-slate-700 */
-  --input-bg: #0f172a;
-  --navbar-bg: #1e293b;
+  --text-muted: #cbd5e1; /* slate-300 */
+  --border-color: #1e293b; /* border-slate-800 */
+  --input-bg: #020617;
+  --navbar-bg: #0f172a;
 }
 
 body, html {
@@ -28,6 +28,9 @@ body, html {
 }
 body, .form-control {
   font-size: 0.9rem;
+}
+label, .text-muted {
+  color: var(--text-muted);
 }
 body, html, #root, .App {
   min-height: 100vh;
