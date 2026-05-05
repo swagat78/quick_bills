@@ -1,14 +1,4 @@
 :root {
-  --bg-color: #f2f3f7;
-  --card-bg: #ffffff;
-  --text-main: #2d3436;
-  --text-muted: #636e72;
-  --border-color: #e9ecef;
-  --input-bg: #f5f7f9;
-  --navbar-bg: #ffffff;
-}
-
-[data-theme='dark'], .dark {
   --bg-color: #020617; /* bg-slate-950 */
   --card-bg: #0f172a; /* bg-slate-900 */
   --text-main: #f1f5f9; /* slate-100 */

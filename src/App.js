@@ -21,7 +21,7 @@ const ProtectedRoute = ({ session, children }) => {
 };
 
 // ── Navigation Component (to access router hooks) ──
-const Navigation = ({ session, handleLogout, theme, toggleTheme }) => {
+const Navigation = ({ session, handleLogout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = React.useRef(null);
   const location = useLocation();
@@ -70,16 +70,6 @@ const Navigation = ({ session, handleLogout, theme, toggleTheme }) => {
         </div>
         
         <div className="d-flex align-items-center gap-2">
-          <Button 
-            variant="light" 
-            size="sm" 
-            className="rounded-circle p-2 d-flex align-items-center justify-content-center border-0 bg-transparent theme-toggle dark:hover:bg-slate-800"
-            onClick={toggleTheme}
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {theme === 'dark' ? <BiSun size={18} className="text-warning" /> : <BiMoon size={18} className="text-primary" />}
-          </Button>
-
           <div className="position-relative" ref={dropdownRef}>
             <Button 
               variant="light" 
@@ -126,20 +116,10 @@ const Navigation = ({ session, handleLogout, theme, toggleTheme }) => {
 const App = () => {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
-  };
+    document.documentElement.classList.add('dark');
+  }, []);
 
   useEffect(() => {
     // Initial session check
@@ -171,7 +151,7 @@ const App = () => {
   return (
     <Router>
       <div className="App">
-        <Navigation session={session} handleLogout={handleLogout} theme={theme} toggleTheme={toggleTheme} />
+        <Navigation session={session} handleLogout={handleLogout} />
 
         <Routes>
           {/* Public route — no auth needed */}
