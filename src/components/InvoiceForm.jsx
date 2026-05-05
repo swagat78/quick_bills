@@ -491,7 +491,7 @@ const InvoiceForm = () => {
           </Card>
         </Col>
         <Col md={4} lg={3}>
-          <div className="sticky-top pt-md-3 pt-xl-4">
+          <div className="sticky-top" style={{ top: '70px', zIndex: 10, paddingTop: '1rem' }}>
             <InvoiceModal
               showModal={isOpen}
               closeModal={closeModal}
