@@ -602,7 +602,14 @@ const InvoiceForm = () => {
               <Form.Label className="fw-bold">GST Type:</Form.Label>
               <Form.Select
                 value={gstType}
-                onChange={(e) => setGstType(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setGstType(val);
+                  if (val === "none") {
+                    setTaxRate(0);
+                    setIsCustomTax(false);
+                  }
+                }}
                 className="btn btn-light my-1"
               >
                 <option value="none">No GST</option>
