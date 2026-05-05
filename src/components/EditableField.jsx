@@ -29,6 +29,7 @@ const EditableField = ({ cellData, onItemizedItemEdit }) => {
         precision={cellData.precision}
         aria-label={cellData.name}
         onChange={onItemizedItemEdit}
+        disabled={cellData.disabled}
         required
       />
     </InputGroup>

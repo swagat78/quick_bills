@@ -11,6 +11,7 @@ const InvoiceItem = ({
   currency,
   onRowDel,
   onRowAdd,
+  isLocked,
 }) => {
   return (
     <div>
@@ -31,18 +32,23 @@ const InvoiceItem = ({
               onItemizedItemEdit={onItemizedItemEdit}
               onDelEvent={onRowDel}
               currency={currency}
+              isLocked={isLocked}
             />
           ))}
         </tbody>
       </Table>
-      <Button className="fw-bold btn-secondary" onClick={onRowAdd}>
+      <Button
+        className="fw-bold btn-secondary"
+        onClick={onRowAdd}
+        disabled={isLocked}
+      >
         Add Item
       </Button>
     </div>
   );
 };
 
-const ItemRow = ({ item, onItemizedItemEdit, onDelEvent, currency }) => {
+const ItemRow = ({ item, onItemizedItemEdit, onDelEvent, currency, isLocked }) => {
   const handleDelete = () => {
     onDelEvent(item);
   };
@@ -58,6 +64,7 @@ const ItemRow = ({ item, onItemizedItemEdit, onDelEvent, currency }) => {
             placeholder: "Item name",
             value: item.name,
             id: item.id,
+            disabled: isLocked,
           }}
         />
         <EditableField
@@ -68,6 +75,7 @@ const ItemRow = ({ item, onItemizedItemEdit, onDelEvent, currency }) => {
             placeholder: "Item description",
             value: item.description,
             id: item.id,
+            disabled: isLocked,
           }}
         />
       </td>
@@ -81,6 +89,7 @@ const ItemRow = ({ item, onItemizedItemEdit, onDelEvent, currency }) => {
             step: "1",
             value: item.quantity,
             id: item.id,
+            disabled: isLocked,
           }}
         />
       </td>
@@ -97,15 +106,21 @@ const ItemRow = ({ item, onItemizedItemEdit, onDelEvent, currency }) => {
             textAlign: "text-end",
             value: item.price,
             id: item.id,
+            disabled: isLocked,
           }}
         />
       </td>
       <td className="text-center" style={{ minWidth: "50px" }}>
-        <BiTrash
+        <Button
+          variant="danger"
+          size="sm"
           onClick={handleDelete}
+          disabled={isLocked}
           style={{ height: "33px", width: "33px", padding: "7.5px" }}
-          className="text-white mt-1 btn btn-danger"
-        />
+          className="mt-1"
+        >
+          <BiTrash />
+        </Button>
       </td>
     </tr>
   );

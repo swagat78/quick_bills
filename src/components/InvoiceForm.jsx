@@ -55,7 +55,10 @@ const InvoiceForm = () => {
   const [status, setStatus] = useState("draft");
 
   // ── GST State ──
-  const [gstType, setGstType] = useState("none"); // "none" | "intra" | "inter"
+  const [gstType, setGstType] = useState("none");
+
+  // Status-based lock logic
+  const isLocked = status !== "draft"; // "none" | "intra" | "inter"
   const [cgst, setCgst] = useState("0.00");
   const [sgst, setSgst] = useState("0.00");
   const [igst, setIgst] = useState("0.00");
@@ -388,6 +391,7 @@ const InvoiceForm = () => {
               onRowDel={handleRowDel}
               currency={currency}
               items={items}
+              isLocked={isLocked || !isOwner}
             />
 
             {/* ── Totals & GST Breakdown ── */}
@@ -497,10 +501,10 @@ const InvoiceForm = () => {
               value={notes}
               onChange={handleChange(setNotes)}
               as="textarea"
-              className="my-2"
+              className="my-2 bg-light"
               rows={1}
-              readOnly={!isOwner}
-              style={!isOwner ? { opacity: 0.7, cursor: 'not-allowed' } : {}}
+              readOnly={true}
+              style={{ opacity: 0.8, cursor: 'not-allowed' }}
             />
             {!isOwner && (
               <div className="text-muted" style={{ fontSize: '0.75rem' }}>
@@ -553,43 +557,22 @@ const InvoiceForm = () => {
               </Form.Select>
             </Form.Group>
 
-            <Form.Group className="mb-3">
+            <Form.Group className="mb-4">
               <Form.Label className="fw-bold">Currency:</Form.Label>
-              <div
-                className="d-flex align-items-center gap-2 px-3 py-2 rounded bg-light border"
-                style={{ fontSize: '0.9rem' }}
+              <Form.Select
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                className="btn btn-light my-1 text-start"
+                aria-label="Change Currency"
               >
-                <span className="fw-bold" style={{ fontSize: '1.1rem' }}>{currency}</span>
-                <span className="text-muted">
-                  {CURRENCY_OPTIONS.find(c => c.symbol === currency)?.label || currency}
-                </span>
-                <span
-                  className="ms-auto badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25"
-                  style={{ fontSize: '0.65rem' }}
-                >
-                  🔒 Locked
-                </span>
-              </div>
-              <div className="mt-1 d-flex justify-content-end">
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="text-muted p-0"
-                  style={{ fontSize: '0.72rem', textDecoration: 'none' }}
-                  onClick={async () => {
-                    // Cycle through currencies or prompt
-                    const currentIdx = CURRENCY_OPTIONS.findIndex(c => c.symbol === currency);
-                    const nextIdx = (currentIdx + 1) % CURRENCY_OPTIONS.length;
-                    const nextCurrency = CURRENCY_OPTIONS[nextIdx].symbol;
-                    const ok = await updateProfile({ currency: nextCurrency });
-                    if (ok) {
-                      setCurrency(nextCurrency);
-                      toast.success(`Currency changed to ${CURRENCY_OPTIONS[nextIdx].label}`);
-                    }
-                  }}
-                >
-                  ⚙ Change in Settings
-                </Button>
+                {CURRENCY_OPTIONS.map((opt) => (
+                  <option key={opt.symbol} value={opt.symbol}>
+                    {opt.label} ({opt.symbol})
+                  </option>
+                ))}
+              </Form.Select>
+              <div className="text-muted mt-1" style={{ fontSize: '0.75rem' }}>
+                * Selecting a new currency updates all price fields in real-time.
               </div>
             </Form.Group>
 
