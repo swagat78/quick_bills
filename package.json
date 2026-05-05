@@ -1,7 +1,7 @@
 {
-  "name": "resume",
+  "name": "quick-bills",
   "version": "1.0.0",
-  "description": "Quick Bills",
+  "description": "Industrial Minimalist AI-Powered Invoicing Engine built with React, Supabase, and Tailwind CSS.",
   "license": "ISC",
   "author": "Swagat",
   "type": "commonjs",

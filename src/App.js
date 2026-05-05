@@ -74,7 +74,7 @@ const Navigation = ({ session, handleLogout }) => {
             <Button 
               variant="light" 
               size="sm" 
-              className="border-0 bg-transparent d-flex align-items-center gap-1 fw-medium text-muted dark:text-slate-300 dark:hover:bg-slate-800"
+              className="border-0 bg-transparent d-flex align-items-center gap-1 fw-medium text-muted hover:bg-slate-100 transition-all"
               style={{ fontSize: '0.85rem' }}
               onClick={() => setDropdownOpen(!dropdownOpen)}
             >
@@ -86,16 +86,16 @@ const Navigation = ({ session, handleLogout }) => {
                 className="position-absolute end-0 mt-2 industrial-section shadow-lg p-0 overflow-hidden" 
                 style={{ width: '220px', zIndex: 1000, top: '100%' }}
               >
-                <div className="px-3 py-2 border-bottom dark:border-slate-800 bg-light bg-opacity-10 dark:bg-slate-900">
+                <div className="px-3 py-2 border-bottom bg-slate-50">
                   <div className="text-muted" style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700 }}>
                     Logged in as
                   </div>
-                  <div className="text-truncate text-slate-400" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                  <div className="text-truncate text-slate-600" style={{ fontSize: '0.8rem' }}>
                     {session.user.email}
                   </div>
                 </div>
                 <button 
-                  className="w-100 text-start px-3 py-2 border-0 bg-transparent text-danger hover-bg-danger-soft transition-colors" 
+                  className="w-100 text-start px-3 py-2 border-0 bg-transparent text-danger hover:bg-red-50 transition-colors" 
                   onClick={() => {
                     handleLogout();
                     setDropdownOpen(false);
@@ -118,7 +118,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.documentElement.classList.add('dark');
+    // Session check and logic here
   }, []);
 
   useEffect(() => {

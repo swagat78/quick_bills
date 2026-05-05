@@ -1,11 +1,11 @@
 :root {
-  --bg-color: #020617; /* bg-slate-950 */
-  --card-bg: #0f172a; /* bg-slate-900 */
-  --text-main: #f1f5f9; /* slate-100 */
-  --text-muted: #94a3b8; /* slate-400 */
-  --border-color: #1e293b; /* border-slate-800 */
-  --input-bg: #020617; /* bg-slate-950 */
-  --navbar-bg: #0f172a; /* bg-slate-900 */
+  --bg-color: #f8fafc; /* slate-50 */
+  --card-bg: #ffffff;
+  --text-main: #0f172a; /* slate-900 */
+  --text-muted: #64748b; /* slate-500 */
+  --border-color: #e2e8f0; /* slate-200 */
+  --input-bg: #ffffff;
+  --navbar-bg: #ffffff;
 }
 
 body, html {
