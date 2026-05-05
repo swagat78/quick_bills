@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import { Button, Navbar, Container, Spinner } from "react-bootstrap";
+import { Button, Navbar, Container, Spinner, Nav } from "react-bootstrap";
+import { BiChevronLeft } from "react-icons/bi";
 import InvoiceForm from "./components/InvoiceForm";
 import Auth from "./components/Auth";
 import Dashboard from "./components/Dashboard";
@@ -17,6 +18,53 @@ const ProtectedRoute = ({ session, children }) => {
     return <Navigate to="/login" replace />;
   }
   return children;
+};
+
+// ── Navigation Component (to access router hooks) ──
+const Navigation = ({ session, handleLogout }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Show back button only on /create (invoice form) or /analytics
+  const isFormPage = location.pathname === "/create";
+  const isAnalyticsPage = location.pathname === "/analytics";
+  const showBack = isFormPage || isAnalyticsPage;
+
+  if (!session) return null;
+
+  return (
+    <Navbar bg="white" className="border-bottom px-4 py-3 sticky-top">
+      <Container>
+        <div className="d-flex align-items-center gap-3">
+          {showBack && (
+            <Button 
+              variant="light" 
+              size="sm" 
+              className="d-flex align-items-center gap-1 text-muted border-0 bg-transparent"
+              onClick={() => navigate("/dashboard")}
+              style={{ fontSize: '0.9rem', fontWeight: 500 }}
+            >
+              <BiChevronLeft size={20} /> Back to Dashboard
+            </Button>
+          )}
+          {!showBack && (
+            <Navbar.Brand as={Link} to="/dashboard" className="fw-bold fs-4 text-primary m-0 p-0">
+              QuickBills
+            </Navbar.Brand>
+          )}
+        </div>
+        
+        <div className="d-flex align-items-center gap-3">
+          <span className="text-muted small d-none d-md-block">
+            {session.user.email}
+          </span>
+          <Button variant="outline-danger" size="sm" onClick={handleLogout}>
+            Sign Out
+          </Button>
+        </div>
+      </Container>
+    </Navbar>
+  );
 };
 
 const App = () => {
@@ -53,23 +101,7 @@ const App = () => {
   return (
     <Router>
       <div className="App">
-        {session && (
-          <Navbar bg="white" className="border-bottom px-4 py-3 sticky-top">
-            <Container>
-              <Navbar.Brand href="/dashboard" className="fw-bold fs-4 text-primary">
-                QuickBills
-              </Navbar.Brand>
-              <div className="d-flex align-items-center gap-3">
-                <span className="text-muted small d-none d-md-block">
-                  {session.user.email}
-                </span>
-                <Button variant="outline-danger" size="sm" onClick={handleLogout}>
-                  Sign Out
-                </Button>
-              </div>
-            </Container>
-          </Navbar>
-        )}
+        <Navigation session={session} handleLogout={handleLogout} />
 
         <Routes>
           {/* Public route — no auth needed */}
