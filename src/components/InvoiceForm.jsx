@@ -275,7 +275,7 @@ const InvoiceForm = () => {
           {/* ── AI Auto-Fill Bar ── */}
           <AIPrompt onAutoFill={handleAIAutoFill} />
 
-          <Card className="p-4 p-xl-5 my-3 my-xl-4">
+          <Card className="p-4 p-xl-5 my-2 my-xl-2">
             <div className="d-flex flex-row align-items-start justify-content-between mb-3">
               <div className="d-flex flex-column">
                 <div className="d-flex flex-column">
