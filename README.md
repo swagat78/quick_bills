@@ -4,22 +4,28 @@ QuickBills is a high-performance, production-ready SaaS platform designed for th
 
 ![QuickBills Header](https://via.placeholder.com/1200x400/020617/3b82f6?text=QuickBills:+Industrial+Minimalist+Invoicing)
 
+## 🌐 Live Demo
+- **Frontend**: [quick-bills-ai.netlify.app](https://quick-bills-ai.netlify.app)
+- **Backend API**: [quick-bills.onrender.com](https://quick-bills.onrender.com)
+
 ## 🚀 Key Features
 
 - **Industrial Aesthetic**: A high-end, permanent Dark Mode interface built on a tiered slate palette (`slate-950` / `slate-900`) for maximum visual depth and professional feel.
 - **AI-Powered Auto-Fill**: Streamline your workflow with an AI prompt bar that extracts line items and client details from natural language.
 - **Comprehensive GST Support**: Built-in logic for Intra-State (CGST + SGST) and Inter-State (IGST) taxation, compliant with modern regulatory standards.
+- **Server-Side Price Validation**: Critical calculations (subtotal, tax, total) are handled by the Node.js backend to prevent client-side price tampering.
 - **Secure Auth & Profiles**: Robust user management powered by **Supabase Auth**, including customizable profile settings and default currency persistence.
 - **Sticky Workspace**: An optimized editing experience with a pinned action sidebar and fluid vertical scrolling for complex, multi-item invoices.
 - **Public Share Links**: Generate professional, read-only public links for your invoices with real-time status watermarks (PAID, OVERDUE, etc.).
 
 ## 💻 Tech Stack
 
-- **Frontend**: React 18, Tailwind CSS v3 (Custom Industrial Theme), React-Bootstrap.
+- **Frontend**: React 18, Tailwind CSS v3, React-Bootstrap, React-Hot-Toast.
 - **Backend**: Node.js, Express.
+- **AI Engine**: Google Gemini 2.5 Flash API.
 - **Database & Auth**: Supabase (PostgreSQL).
 - **Styling**: Vanilla CSS + Tailwind Utility Classes for a hybrid 'Industrial' look.
-- **Icons**: Lucide React, React Icons (Bi, Bs).
+- **Deployment**: Netlify (Frontend), Render (Backend).
 
 ## 🛠️ Installation & Setup
 
@@ -39,10 +45,16 @@ QuickBills is a high-performance, production-ready SaaS platform designed for th
    ```
 
 3. **Configure Environment Variables**:
-   Create a `.env` file in the root directory:
+   Create a `.env` file in the root directory and the `/server` directory:
    ```env
+   # Frontend .env
    REACT_APP_SUPABASE_URL=your_supabase_url
    REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+   # Backend .env
+   SUPABASE_URL=your_supabase_url
+   SUPABASE_ANON_KEY=your_supabase_anon_key
+   GEMINI_API_KEY=your_google_gemini_key
    ```
 
 4. **Run the Application**:
@@ -58,9 +70,9 @@ QuickBills is a high-performance, production-ready SaaS platform designed for th
 
 QuickBills follows a modular component-based architecture:
 - `/src/components`: Reusable UI modules (InvoiceForm, AIPrompt, Dashboard).
-- `/src/hooks`: Custom logic hooks for auth, data persistence, and debouncing.
+- `/src/hooks`: Custom logic hooks for auth, data persistence, and secure price validation.
 - `/src/utils`: Pure functional utilities for GST calculations and exports.
-- `/server`: Lightweight Express backend for secure price validation and data handling.
+- `/server`: Lightweight Express backend for secure price validation and AI prompt processing.
 
 ## 🎨 Design Philosophy
 
