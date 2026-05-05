@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
 
-const API_URL = "http://localhost:3001";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3001";
 
 /**
  * Hook for server-side invoice price validation.
