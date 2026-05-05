@@ -310,74 +310,78 @@ const InvoiceForm = () => {
               </div>
             </div>
             <hr className="my-4" />
-            <Row className="mb-5">
-              <Col>
-                <Form.Label className="fw-bold">Bill from:</Form.Label>
-                <Form.Control
-                  placeholder="Who is this invoice from?"
-                  rows={3}
-                  value={billFrom}
-                  type="text"
-                  name="billFrom"
-                  className="my-2"
-                  onChange={handleChange(setBillFrom)}
-                  autoComplete="name"
-                  required
-                />
-                <Form.Control
-                  placeholder="Email address"
-                  value={billFromEmail}
-                  type="email"
-                  name="billFromEmail"
-                  className="my-2"
-                  onChange={handleChange(setBillFromEmail)}
-                  autoComplete="email"
-                  required
-                />
-                <Form.Control
-                  placeholder="Billing address"
-                  value={billFromAddress}
-                  type="text"
-                  name="billFromAddress"
-                  className="my-2"
-                  autoComplete="address"
-                  onChange={handleChange(setBillFromAddress)}
-                  required
-                />
+            <Row className="mb-4">
+              <Col md={6}>
+                <div className="industrial-section h-100">
+                  <Form.Label className="fw-bold">Bill from:</Form.Label>
+                  <Form.Control
+                    placeholder="Who is this invoice from?"
+                    rows={3}
+                    value={billFrom}
+                    type="text"
+                    name="billFrom"
+                    className="my-2"
+                    onChange={handleChange(setBillFrom)}
+                    autoComplete="name"
+                    required
+                  />
+                  <Form.Control
+                    placeholder="Email address"
+                    value={billFromEmail}
+                    type="email"
+                    name="billFromEmail"
+                    className="my-2"
+                    onChange={handleChange(setBillFromEmail)}
+                    autoComplete="email"
+                    required
+                  />
+                  <Form.Control
+                    placeholder="Billing address"
+                    value={billFromAddress}
+                    type="text"
+                    name="billFromAddress"
+                    className="my-2"
+                    autoComplete="address"
+                    onChange={handleChange(setBillFromAddress)}
+                    required
+                  />
+                </div>
               </Col>
-              <Col>
-                <Form.Label className="fw-bold">Bill to:</Form.Label>
-                <Form.Control
-                  placeholder="Who is this invoice to?"
-                  rows={3}
-                  value={billTo}
-                  type="text"
-                  name="billTo"
-                  className="my-2"
-                  onChange={handleChange(setBillTo)}
-                  autoComplete="name"
-                  required
-                />
-                <Form.Control
-                  placeholder="Email address"
-                  value={billToEmail}
-                  type="email"
-                  name="billToEmail"
-                  className="my-2"
-                  onChange={handleChange(setBillToEmail)}
-                  autoComplete="email"
-                  required
-                />
-                <Form.Control
-                  placeholder="Billing address"
-                  value={billToAddress}
-                  type="text"
-                  name="billToAddress"
-                  className="my-2"
-                  autoComplete="address"
-                  onChange={handleChange(setBillToAddress)}
-                  required
-                />
+              <Col md={6}>
+                <div className="industrial-section h-100">
+                  <Form.Label className="fw-bold">Bill to:</Form.Label>
+                  <Form.Control
+                    placeholder="Who is this invoice to?"
+                    rows={3}
+                    value={billTo}
+                    type="text"
+                    name="billTo"
+                    className="my-2"
+                    onChange={handleChange(setBillTo)}
+                    autoComplete="name"
+                    required
+                  />
+                  <Form.Control
+                    placeholder="Email address"
+                    value={billToEmail}
+                    type="email"
+                    name="billToEmail"
+                    className="my-2"
+                    onChange={handleChange(setBillToEmail)}
+                    autoComplete="email"
+                    required
+                  />
+                  <Form.Control
+                    placeholder="Billing address"
+                    value={billToAddress}
+                    type="text"
+                    name="billToAddress"
+                    className="my-2"
+                    autoComplete="address"
+                    onChange={handleChange(setBillToAddress)}
+                    required
+                  />
+                </div>
               </Col>
             </Row>
             <InvoiceItem
@@ -471,10 +475,19 @@ const InvoiceForm = () => {
               </Col>
             </Row>
             {!isOwner && (
-              <div className="text-muted" style={{ fontSize: '0.75rem' }}>
+              <div className="text-muted mb-3" style={{ fontSize: '0.75rem' }}>
                 🔒 Read-only — you are not the owner of this invoice.
               </div>
             )}
+            
+            <div className="border-top pt-3 mt-2">
+              <span className="text-muted small uppercase fw-bold" style={{ letterSpacing: '1px' }}>
+                Default Note:
+              </span>
+              <p className="text-muted mb-0 mt-1" style={{ fontSize: '0.85rem' }}>
+                Thank you for doing business with us. Have a great day!
+              </p>
+            </div>
           </Card>
         </Col>
         <Col md={4} lg={3}>
@@ -506,190 +519,183 @@ const InvoiceForm = () => {
               igst={igst}
             />
 
-            <Form.Group className="mb-3">
-              <Form.Label className="fw-bold">Status:</Form.Label>
-              <Form.Select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="btn btn-light my-1"
+            <div className="industrial-section">
+              <Button
+                variant="primary"
+                type="submit"
+                className="d-block w-100 mb-2"
               >
-                <option value="draft">Draft</option>
-                <option value="sent">Sent</option>
-                <option value="paid">Paid</option>
-                <option value="overdue">Overdue</option>
-              </Form.Select>
-            </Form.Group>
+                Review Invoice
+              </Button>
 
-            <Form.Group className="mb-4">
-              <div className="d-flex justify-content-between align-items-center mb-1">
-                <Form.Label className="fw-bold mb-0">Currency:</Form.Label>
-                {isOwner && (
-                  <Button
-                    variant="link"
-                    size="sm"
-                    className="text-muted p-0"
-                    style={{ fontSize: '0.75rem', textDecoration: 'none' }}
-                    onClick={async () => {
-                      const ok = await updateProfile({ currency: currency });
-                      if (ok) toast.success("Default currency saved to your profile!");
-                      else toast.error("Failed to save default currency.");
-                    }}
-                  >
-                    ★ Save as Default
-                  </Button>
-                )}
-              </div>
-              <Form.Select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                className="btn btn-light my-1 text-start"
-                aria-label="Change Currency"
+              <Button
+                variant="success"
+                className="d-block w-100 mb-2"
+                onClick={handleSaveInvoice}
+                disabled={saving || secureValidating}
               >
-                {CURRENCY_OPTIONS.map((opt) => (
-                  <option key={opt.symbol} value={opt.symbol}>
-                    {opt.label} ({opt.symbol})
-                  </option>
-                ))}
-              </Form.Select>
-              <div className="text-muted mt-1" style={{ fontSize: '0.75rem' }}>
-                * Selecting a new currency updates all price fields in real-time.
-              </div>
-            </Form.Group>
+                {secureValidating
+                  ? "Validating & Saving..."
+                  : saving
+                    ? "Saving..."
+                    : invoiceId
+                      ? "Update Invoice"
+                      : "Save Invoice"}
+              </Button>
 
-            {/* ── GST Type Selector ── */}
-            <Form.Group className="mb-3">
-              <Form.Label className="fw-bold">GST Type:</Form.Label>
-              <Form.Select
-                value={gstType}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setGstType(val);
-                  if (val === "none") {
-                    setTaxRate(0);
-                    setIsCustomTax(false);
-                  }
-                }}
-                className="btn btn-light my-1"
+              <Button
+                variant="outline-secondary"
+                className="d-block w-100"
+                onClick={() => navigate("/dashboard")}
               >
-                <option value="none">No GST</option>
-                <option value="intra">Intra-State (CGST + SGST)</option>
-                <option value="inter">Inter-State (IGST)</option>
-              </Form.Select>
-            </Form.Group>
+                Back to Dashboard
+              </Button>
+            </div>
 
-            {/* ── GST Rate with Slab Presets ── */}
-            <Form.Group className="my-3">
-              <Form.Label className="fw-bold">
-                {gstType === "none" ? "Tax rate:" : "GST rate:"}
-              </Form.Label>
-              {gstType !== "none" && (
-                <div className="d-flex gap-1 mb-2 flex-wrap">
-                  {GST_SLABS.map((slab) => (
+            <div className="industrial-section mt-3">
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-bold text-muted small uppercase">Status</Form.Label>
+                <Form.Select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="btn btn-light my-1"
+                >
+                  <option value="draft">Draft</option>
+                  <option value="sent">Sent</option>
+                  <option value="paid">Paid</option>
+                  <option value="overdue">Overdue</option>
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group className="mb-0">
+                <div className="d-flex justify-content-between align-items-center mb-1">
+                  <Form.Label className="fw-bold text-muted small uppercase mb-0">Currency</Form.Label>
+                  {isOwner && (
                     <Button
-                      key={slab}
+                      variant="link"
                       size="sm"
-                      variant={
-                        parseFloat(taxRate) === slab
-                          ? "primary"
-                          : "outline-secondary"
-                      }
-                      onClick={() => {
-                        setTaxRate(slab);
-                        setIsCustomTax(false);
+                      className="text-muted p-0"
+                      style={{ fontSize: '0.7rem', textDecoration: 'none' }}
+                      onClick={async () => {
+                        const ok = await updateProfile({ currency: currency });
+                        if (ok) toast.success("Default currency saved!");
+                        else toast.error("Failed to save.");
                       }}
-                      style={{ minWidth: "42px", fontSize: "0.75rem" }}
                     >
-                      {slab}%
+                      ★ Save
                     </Button>
+                  )}
+                </div>
+                <Form.Select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                  className="btn btn-light my-1 text-start"
+                  aria-label="Change Currency"
+                >
+                  {CURRENCY_OPTIONS.map((opt) => (
+                    <option key={opt.symbol} value={opt.symbol}>
+                      {opt.label} ({opt.symbol})
+                    </option>
                   ))}
-                  <Button
-                    size="sm"
-                    variant={isCustomTax ? "primary" : "outline-secondary"}
-                    onClick={() => setIsCustomTax(true)}
-                    style={{ minWidth: "42px", fontSize: "0.75rem" }}
-                  >
-                    Custom
-                  </Button>
-                </div>
-              )}
-              <InputGroup className="my-1 flex-nowrap">
-                <Form.Control
-                  name="taxRate"
-                  type="number"
-                  value={taxRate}
-                  onChange={handleChange(setTaxRate)}
-                  className="bg-white border"
-                  placeholder="0.0"
-                  min="0.00"
-                  step="0.01"
-                  max="100.00"
-                  readOnly={!isCustomTax}
-                  style={!isCustomTax ? { backgroundColor: '#f8f9fa', cursor: 'not-allowed' } : {}}
-                />
-                <InputGroup.Text className="bg-light fw-bold text-secondary small">
-                  %
-                </InputGroup.Text>
-              </InputGroup>
-              {gstType === "intra" && parseFloat(taxRate) > 0 && (
-                <div className="small text-muted mt-1">
-                  CGST: {(parseFloat(taxRate) / 2).toFixed(1)}% + SGST:{" "}
-                  {(parseFloat(taxRate) / 2).toFixed(1)}%
-                </div>
-              )}
-            </Form.Group>
+                </Form.Select>
+              </Form.Group>
+            </div>
 
-            <Form.Group className="my-3">
-              <Form.Label className="fw-bold">Discount rate:</Form.Label>
-              <InputGroup className="my-1 flex-nowrap">
-                <Form.Control
-                  name="discountRate"
-                  type="number"
-                  value={discountRate}
-                  onChange={handleChange(setDiscountRate)}
-                  className="bg-white border"
-                  placeholder="0.0"
-                  min="0.00"
-                  step="0.01"
-                  max="100.00"
-                />
-                <InputGroup.Text className="bg-light fw-bold text-secondary small">
-                  %
-                </InputGroup.Text>
-              </InputGroup>
-            </Form.Group>
-            <hr className="mt-4 mb-3" />
+            <div className="industrial-section mt-3">
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-bold text-muted small uppercase">GST Type</Form.Label>
+                <Form.Select
+                  value={gstType}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setGstType(val);
+                    if (val === "none") {
+                      setTaxRate(0);
+                      setIsCustomTax(false);
+                    }
+                  }}
+                  className="btn btn-light my-1"
+                >
+                  <option value="none">No GST</option>
+                  <option value="intra">Intra-State</option>
+                  <option value="inter">Inter-State</option>
+                </Form.Select>
+              </Form.Group>
 
-            {/* ── Save Invoice Button (Server-Validated) ── */}
-            <Button
-              variant="success"
-              className="d-block w-100 mb-2"
-              onClick={handleSaveInvoice}
-              disabled={saving || secureValidating}
-            >
-              {secureValidating
-                ? "Validating & Saving..."
-                : saving
-                  ? "Saving..."
-                  : invoiceId
-                    ? "Update Invoice"
-                    : "Save Invoice"}
-            </Button>
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-bold text-muted small uppercase">
+                  {gstType === "none" ? "Tax Rate" : "GST Rate"}
+                </Form.Label>
+                {gstType !== "none" && (
+                  <div className="d-flex gap-1 mb-2 flex-wrap">
+                    {GST_SLABS.map((slab) => (
+                      <Button
+                        key={slab}
+                        size="sm"
+                        variant={
+                          parseFloat(taxRate) === slab
+                            ? "primary"
+                            : "outline-secondary"
+                        }
+                        onClick={() => {
+                          setTaxRate(slab);
+                          setIsCustomTax(false);
+                        }}
+                        style={{ minWidth: "40px", fontSize: "0.7rem" }}
+                      >
+                        {slab}%
+                      </Button>
+                    ))}
+                    <Button
+                      size="sm"
+                      variant={isCustomTax ? "primary" : "outline-secondary"}
+                      onClick={() => setIsCustomTax(true)}
+                      style={{ minWidth: "40px", fontSize: "0.7rem" }}
+                    >
+                      ...
+                    </Button>
+                  </div>
+                )}
+                <InputGroup className="my-1 flex-nowrap">
+                  <Form.Control
+                    name="taxRate"
+                    type="number"
+                    value={taxRate}
+                    onChange={handleChange(setTaxRate)}
+                    className="bg-white border text-end"
+                    placeholder="0.0"
+                    min="0.00"
+                    step="0.01"
+                    max="100.00"
+                    readOnly={!isCustomTax}
+                    style={!isCustomTax ? { backgroundColor: 'var(--input-bg)', cursor: 'not-allowed' } : {}}
+                  />
+                  <InputGroup.Text className="bg-light fw-bold text-secondary small">
+                    %
+                  </InputGroup.Text>
+                </InputGroup>
+              </Form.Group>
 
-            <Button
-              variant="primary"
-              type="submit"
-              className="d-block w-100 btn-secondary mb-2"
-            >
-              Review Invoice
-            </Button>
-
-            <Button
-              variant="outline-secondary"
-              className="d-block w-100"
-              onClick={() => navigate("/dashboard")}
-            >
-              Back to Dashboard
-            </Button>
+              <Form.Group className="mb-0">
+                <Form.Label className="fw-bold text-muted small uppercase">Discount</Form.Label>
+                <InputGroup className="my-1 flex-nowrap">
+                  <Form.Control
+                    name="discountRate"
+                    type="number"
+                    value={discountRate}
+                    onChange={handleChange(setDiscountRate)}
+                    className="bg-white border text-end"
+                    placeholder="0.0"
+                    min="0.00"
+                    step="0.01"
+                    max="100.00"
+                  />
+                  <InputGroup.Text className="bg-light fw-bold text-secondary small">
+                    %
+                  </InputGroup.Text>
+                </InputGroup>
+              </Form.Group>
+            </div>
           </div>
         </Col>
       </Row>
