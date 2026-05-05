@@ -3,7 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import { Button, Navbar, Container, Spinner, Nav } from "react-bootstrap";
+import { Button, Navbar, Container, Spinner, Nav, Dropdown } from "react-bootstrap";
 import { BiChevronLeft, BiSun, BiMoon } from "react-icons/bi";
 import InvoiceForm from "./components/InvoiceForm";
 import Auth from "./components/Auth";
