@@ -4,66 +4,26 @@
 
 .pub-wrapper {
   min-height: 100vh;
-  background: #f8f9fa;
+  background: var(--bg-color, #f8f9fa);
   padding: 2rem 1rem;
+  transition: background 0.3s ease;
 }
 
-.pub-container {
-  max-width: 800px;
-  margin: 0 auto;
-}
+.dark .pub-brand, .dark .pub-title { color: #f1f5f9; }
+.dark .pub-info-name { color: #f1f5f9; }
 
-/* Header bar */
-.pub-topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.pub-brand {
-  font-size: 1.2rem;
-  font-weight: 900;
-  letter-spacing: 1px;
-  color: #2d3436;
-}
-
-.pub-badge {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-weight: 700;
-}
-
-.pub-badge.paid {
-  background: rgba(0, 184, 148, 0.1);
-  color: #00b894;
-}
-
-.pub-badge.sent {
-  background: rgba(9, 132, 227, 0.1);
-  color: #0984e3;
-}
-
-.pub-badge.draft {
-  background: rgba(178, 190, 195, 0.15);
-  color: #636e72;
-}
-
-.pub-badge.overdue {
-  background: rgba(214, 48, 49, 0.1);
-  color: #d63031;
-}
-
-/* Invoice Card */
 .pub-card {
-  background: #fff;
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, transparent);
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   overflow: hidden;
   position: relative;
+  transition: all 0.3s ease;
+}
+
+.dark .pub-card {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 /* Watermark */

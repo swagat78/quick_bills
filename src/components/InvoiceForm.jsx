@@ -97,6 +97,15 @@ const InvoiceForm = () => {
     setTotal(gstResult.total.toFixed(2));
   }, [items, taxRate, discountRate, gstType, currency]);
 
+  // ── Logic Guardrails: Reset rates when GST is disabled ──
+  useEffect(() => {
+    if (gstType === "none") {
+      setTaxRate(0);
+      setDiscountRate(0);
+      setIsCustomTax(false);
+    }
+  }, [gstType]);
+
   useEffect(() => {
     handleCalculateTotal();
   }, [currency, handleCalculateTotal]);
@@ -481,17 +490,17 @@ const InvoiceForm = () => {
             )}
             
             <div className="border-top pt-3 mt-2">
-              <span className="text-muted small uppercase fw-bold" style={{ letterSpacing: '1px' }}>
+              <span className="text-primary dark:text-blue-400 small uppercase fw-bold" style={{ letterSpacing: '1px' }}>
                 Default Note:
               </span>
-              <p className="text-muted mb-0 mt-1" style={{ fontSize: '0.85rem' }}>
+              <p className="text-dark dark:text-slate-200 mb-0 mt-1" style={{ fontSize: '0.85rem', fontWeight: 500 }}>
                 Thank you for doing business with us. Have a great day!
               </p>
             </div>
           </Card>
         </Col>
         <Col md={4} lg={3}>
-          <div className="sticky-top" style={{ top: '70px', zIndex: 10, paddingTop: '1rem' }}>
+          <div className="sticky-top" style={{ top: '80px', zIndex: 10, paddingTop: '0.5rem' }}>
             <InvoiceModal
               showModal={isOpen}
               closeModal={closeModal}

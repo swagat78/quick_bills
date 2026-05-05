@@ -11,11 +11,11 @@
 [data-theme='dark'], .dark {
   --bg-color: #020617; /* bg-slate-950 */
   --card-bg: #0f172a; /* bg-slate-900 */
-  --text-main: #f8fafc;
-  --text-muted: #cbd5e1; /* slate-300 */
+  --text-main: #f1f5f9; /* slate-100 */
+  --text-muted: #94a3b8; /* slate-400 */
   --border-color: #1e293b; /* border-slate-800 */
-  --input-bg: #020617;
-  --navbar-bg: #0f172a;
+  --input-bg: #020617; /* bg-slate-950 */
+  --navbar-bg: #0f172a; /* bg-slate-900 */
 }
 
 body, html {

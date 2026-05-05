@@ -22,8 +22,20 @@ const ProtectedRoute = ({ session, children }) => {
 
 // ── Navigation Component (to access router hooks) ──
 const Navigation = ({ session, handleLogout, theme, toggleTheme }) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = React.useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   
   // Show back button only on /create (invoice form) or /analytics
   const isFormPage = location.pathname === "/create";
@@ -68,29 +80,43 @@ const Navigation = ({ session, handleLogout, theme, toggleTheme }) => {
             {theme === 'dark' ? <BiSun size={18} className="text-warning" /> : <BiMoon size={18} className="text-primary" />}
           </Button>
 
-          <Dropdown align="end">
-            <Dropdown.Toggle 
+          <div className="position-relative" ref={dropdownRef}>
+            <Button 
               variant="light" 
               size="sm" 
               className="border-0 bg-transparent d-flex align-items-center gap-1 fw-medium text-muted dark:text-slate-300 dark:hover:bg-slate-800"
               style={{ fontSize: '0.85rem' }}
+              onClick={() => setDropdownOpen(!dropdownOpen)}
             >
               Account
-            </Dropdown.Toggle>
-            <Dropdown.Menu className="shadow-lg border-0 dark:bg-slate-900 mt-2">
-              <div className="px-3 py-2 text-muted small border-bottom dark:border-slate-800">
-                <div className="fw-bold text-dark dark:text-slate-200">Logged in as</div>
-                <div className="text-truncate" style={{ maxWidth: '200px' }}>{session.user.email}</div>
-              </div>
-              <Dropdown.Item 
-                className="text-danger py-2" 
-                onClick={handleLogout}
-                style={{ fontSize: '0.9rem' }}
+            </Button>
+            
+            {dropdownOpen && (
+              <div 
+                className="position-absolute end-0 mt-2 industrial-section shadow-lg p-0 overflow-hidden" 
+                style={{ width: '220px', zIndex: 1000, top: '100%' }}
               >
-                Sign Out
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+                <div className="px-3 py-2 border-bottom dark:border-slate-800 bg-light bg-opacity-10 dark:bg-slate-900">
+                  <div className="text-muted" style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700 }}>
+                    Logged in as
+                  </div>
+                  <div className="text-truncate text-slate-400" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    {session.user.email}
+                  </div>
+                </div>
+                <button 
+                  className="w-100 text-start px-3 py-2 border-0 bg-transparent text-danger hover-bg-danger-soft transition-colors" 
+                  onClick={() => {
+                    handleLogout();
+                    setDropdownOpen(false);
+                  }}
+                  style={{ fontSize: '0.85rem' }}
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </Container>
     </Navbar>
