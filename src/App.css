@@ -8,12 +8,12 @@
   --navbar-bg: #ffffff;
 }
 
-[data-theme='dark'] {
-  --bg-color: #0f172a;
-  --card-bg: #1e293b;
+[data-theme='dark'], .dark {
+  --bg-color: #020617; /* bg-slate-950 */
+  --card-bg: #1e293b; /* bg-slate-800 */
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
-  --border-color: #334155;
+  --border-color: #334155; /* border-slate-700 */
   --input-bg: #0f172a;
   --navbar-bg: #1e293b;
 }

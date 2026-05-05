@@ -40,7 +40,7 @@ const Navigation = ({ session, handleLogout, theme, toggleTheme }) => {
             <Button 
               variant="light" 
               size="sm" 
-              className="d-flex align-items-center gap-1 text-muted border-0 bg-transparent"
+              className="d-flex align-items-center gap-1 text-muted border-0 bg-transparent dark:text-slate-300 dark:hover:text-white"
               onClick={() => navigate("/dashboard")}
               style={{ fontSize: '0.9rem', fontWeight: 500 }}
             >
@@ -48,7 +48,7 @@ const Navigation = ({ session, handleLogout, theme, toggleTheme }) => {
             </Button>
           )}
           {!showBack && (
-            <Navbar.Brand as={Link} to="/dashboard" className="fw-bold fs-4 text-primary m-0 p-0">
+            <Navbar.Brand as={Link} to="/dashboard" className="fw-bold fs-4 text-primary m-0 p-0 dark:text-blue-400">
               QuickBills
             </Navbar.Brand>
           )}
@@ -58,14 +58,14 @@ const Navigation = ({ session, handleLogout, theme, toggleTheme }) => {
           <Button 
             variant="light" 
             size="sm" 
-            className="rounded-circle p-2 d-flex align-items-center justify-content-center border-0 bg-transparent theme-toggle"
+            className="rounded-circle p-2 d-flex align-items-center justify-content-center border-0 bg-transparent theme-toggle dark:hover:bg-slate-800"
             onClick={toggleTheme}
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
             {theme === 'dark' ? <BiSun size={20} className="text-warning" /> : <BiMoon size={20} className="text-primary" />}
           </Button>
 
-          <span className="text-muted small d-none d-md-block">
+          <span className="text-muted small d-none d-md-block dark:text-slate-400">
             {session.user.email}
           </span>
           <Button variant="outline-danger" size="sm" onClick={handleLogout}>
@@ -83,7 +83,11 @@ const App = () => {
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
     localStorage.setItem('theme', theme);
   }, [theme]);
 

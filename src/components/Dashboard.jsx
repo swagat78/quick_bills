@@ -174,7 +174,7 @@ const Dashboard = () => {
           <Dropdown as={ButtonGroup}>
             <Button
               variant="outline-secondary"
-              className="d-flex align-items-center gap-2 px-3 py-2"
+              className="d-flex align-items-center gap-2 px-3 py-2 dark:border-slate-700 dark:bg-slate-800/50 dark:text-white"
               onClick={() => handleExport("excel")}
               disabled={exporting || invoices.length === 0}
             >
@@ -197,7 +197,7 @@ const Dashboard = () => {
           </Dropdown>
           <Button 
             variant="outline-dark" 
-            className="d-flex align-items-center gap-2 px-3 py-2"
+            className="d-flex align-items-center gap-2 px-3 py-2 dark:border-slate-700 dark:bg-slate-800/50 dark:text-white"
             onClick={() => navigate("/analytics")}
           >
             <BiBarChartAlt2 size={20} /> <span className="d-none d-sm-inline">Business Health</span><span className="d-sm-none">Health</span>
