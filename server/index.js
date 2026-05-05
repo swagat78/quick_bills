@@ -523,6 +523,10 @@ app.get("/api/health", (req, res) => {
 });
 
 // ── Start ──
+app.get("/", (req, res) => {
+  res.send("QuickBills Backend is Live 🚀");
+});
+
 app.listen(PORT, () => {
   console.log(`\n⚡ QuickBills AI Server running at http://localhost:${PORT}`);
   console.log(`   Model: ${GEMINI_MODEL}`);
