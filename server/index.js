@@ -7,7 +7,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ── Middleware ──
-app.use(cors({ origin: "http://localhost:1234" }));
+app.use(cors({ 
+  origin: ["http://localhost:1234", "https://quick-bills-ai.netlify.app"] 
+}));
 app.use(express.json());
 
 // ── Supabase config (for public invoice sharing) ──
