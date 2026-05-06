@@ -30,6 +30,10 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = "gemini-2.5-flash";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
+// ── MiniMax API config ──
+const MINIMAX_API_KEY = process.env.MINIMAX_API_KEY || "";
+const MINIMAX_API_URL = "https://api.minimax.chat/v1/text/chatcompletion_pro";
+
 // ── System prompt that forces structured JSON output ──
 const SYSTEM_PROMPT = `You are an AI invoice assistant for QuickBills. 
 Given a natural language prompt from a user, extract invoice data and return ONLY valid JSON (no markdown, no backticks, no explanation).
@@ -70,56 +74,94 @@ app.post("/api/ai-invoice", async (req, res) => {
       return res.status(400).json({ error: "Prompt is required." });
     }
 
-    if (!GEMINI_API_KEY) {
+    let invoiceData;
+
+    if (MINIMAX_API_KEY) {
+      // Use MiniMax API
+      const mxResponse = await fetch(MINIMAX_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${MINIMAX_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "MiniMax-M2.7",
+          messages: [
+            {
+              role: "user",
+              content: `${SYSTEM_PROMPT}\n\nUser prompt: ${prompt}`,
+            },
+          ],
+          temperature: 0.1,
+          max_tokens: 1024,
+        }),
+      });
+
+      if (!mxResponse.ok) {
+        const errBody = await mxResponse.json().catch(() => ({}));
+        const errMsg = errBody?.error?.message || "Unknown MiniMax API error";
+        console.error("MiniMax API error:", errMsg);
+        return res.status(502).json({ error: errMsg });
+      }
+
+      const mxData = await mxResponse.json();
+      const rawText =
+        mxData?.choices?.[0]?.message?.content ||
+        mxData?.choices?.[0]?.text ||
+        "";
+
+      const cleaned = rawText
+        .replace(/```json\n?/g, "")
+        .replace(/```\n?/g, "")
+        .trim();
+
+      invoiceData = JSON.parse(cleaned);
+    } else if (GEMINI_API_KEY) {
+      // Use Gemini API
+      const response = await fetch(GEMINI_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [{ text: SYSTEM_PROMPT }],
+          },
+          contents: [
+            {
+              role: "user",
+              parts: [{ text: prompt }],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.1,
+            maxOutputTokens: 1024,
+            responseMimeType: "application/json",
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => ({}));
+        const errMsg = errBody?.error?.message || "Unknown Gemini API error";
+        console.error("Gemini API error:", errMsg);
+        return res.status(502).json({ error: errMsg });
+      }
+
+      const data = await response.json();
+      const rawText =
+        data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+      const cleaned = rawText
+        .replace(/```json\n?/g, "")
+        .replace(/```\n?/g, "")
+        .trim();
+
+      invoiceData = JSON.parse(cleaned);
+    } else {
       return res.status(500).json({
         error:
-          "GEMINI_API_KEY is not set. Add it to your environment variables.",
+          "No AI provider configured. Set GEMINI_API_KEY or MINIMAX_API_KEY in your environment variables.",
       });
     }
-
-    // Call Gemini API
-    const response = await fetch(GEMINI_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        systemInstruction: {
-          parts: [{ text: SYSTEM_PROMPT }],
-        },
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: prompt }],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.1,
-          maxOutputTokens: 1024,
-          responseMimeType: "application/json",
-        },
-      }),
-    });
-
-    if (!response.ok) {
-      const errBody = await response.json().catch(() => ({}));
-      const errMsg = errBody?.error?.message || "Unknown Gemini API error";
-      console.error("Gemini API error:", errMsg);
-      return res.status(502).json({ error: errMsg });
-    }
-
-    const data = await response.json();
-
-    // Extract the text content from Gemini's response
-    const rawText =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-
-    // Clean up: remove markdown code fences if present
-    const cleaned = rawText
-      .replace(/```json\n?/g, "")
-      .replace(/```\n?/g, "")
-      .trim();
-
-    // Parse JSON
-    const invoiceData = JSON.parse(cleaned);
 
     return res.json({ success: true, data: invoiceData });
   } catch (err) {
