@@ -149,16 +149,23 @@ const Auth = () => {
         </form>
 
         <div className="auth-footer">
-          {isSignUp ? "Already have an account?" : "Forgot your password?"}
-          <span className="auth-link" onClick={() => isSignUp ? setIsSignUp(false) : setIsForgot(true)}>
-            {isSignUp ? "Sign In" : "Reset Password"}
-          </span>
-          {isSignUp && (
+          {isSignUp ? (
             <>
-              <br />
-              {"New to QuickBills?"}{" "}
-              <span className="auth-link" onClick={() => {}}>
+              Already have an account?{" "}
+              <span className="auth-link" onClick={() => setIsSignUp(false)}>
+                Sign In
+              </span>
+            </>
+          ) : (
+            <>
+              Don't have an account?{" "}
+              <span className="auth-link" onClick={() => setIsSignUp(true)}>
                 Create Account
+              </span>
+              <br />
+              Forgot your password?{" "}
+              <span className="auth-link" onClick={() => setIsForgot(true)}>
+                Reset Password
               </span>
             </>
           )}
