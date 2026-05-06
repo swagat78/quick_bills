@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./AIPrompt.css";
 
-const AI_SERVER = process.env.REACT_APP_API_URL || "http://localhost:3001";
+const AI_SERVER = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 const AIPrompt = ({ onAutoFill }) => {
   const [prompt, setPrompt] = useState("");
