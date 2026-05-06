@@ -8,6 +8,8 @@ import { exportAsCSV, exportAsExcel } from "../utils/exportInvoices";
 import useDebounce from "../hooks/useDebounce";
 import DashboardFilters from "./DashboardFilters";
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3001";
+
 const INITIAL_FILTERS = {
   search: "",
   status: "",
@@ -121,7 +123,7 @@ const Dashboard = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return toast.error("You must be logged in.");
 
-      const res = await fetch(`http://localhost:3001/api/invoice/${invoiceId}/share`, {
+      const res = await fetch(`${API_URL}/api/invoice/${invoiceId}/share`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
