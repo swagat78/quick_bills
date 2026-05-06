@@ -24,9 +24,47 @@
   font-size: 2rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
+}
+
+.auth-header h2 {
   background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.auth-card.signup .auth-header h2,
+.auth-card.signup .auth-header .auth-title-tag {
+  background: linear-gradient(to right, #f857a6 0%, #ff5858 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.auth-card.signup .auth-btn {
+  background: linear-gradient(to right, #f857a6, #ff5858);
+}
+
+.auth-card.signup .auth-btn:hover {
+  box-shadow: 0 10px 20px -5px rgba(248, 87, 166, 0.4);
+}
+
+.auth-card.signup .auth-input:focus {
+  border-color: #f857a6;
+  box-shadow: 0 0 0 4px rgba(248, 87, 166, 0.1);
+}
+
+.auth-card.forgot .auth-header h2 {
+  background: linear-gradient(to right, #ff9a9e 0%, #fecfef 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.auth-card.forgot .auth-btn {
+  background: linear-gradient(to right, #ff9a9e, #fecfef);
+  color: #333;
+}
+
+.auth-card.forgot .auth-btn:hover {
+  box-shadow: 0 10px 20px -5px rgba(255, 154, 158, 0.4);
 }
 
 .auth-header p {
@@ -114,4 +152,15 @@
   border-radius: 10px;
   font-size: 0.85rem;
   margin-bottom: 1.5rem;
+}
+
+.success-msg {
+  background: rgba(72, 199, 142, 0.1);
+  border: 1px solid rgba(72, 199, 142, 0.2);
+  color: #48c78e;
+  padding: 0.8rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
 }

@@ -10,6 +10,7 @@ import Auth from "./components/Auth";
 import Dashboard from "./components/Dashboard";
 import BusinessHealth from "./components/BusinessHealth";
 import PublicInvoice from "./components/PublicInvoice";
+import ResetPassword from "./components/ResetPassword";
 import { supabase } from "./supabaseClient";
 
 // 🛡️ Middleware-style Protected Route component
@@ -157,9 +158,14 @@ const App = () => {
           {/* Public route — no auth needed */}
           <Route path="/invoice/public/:token" element={<PublicInvoice />} />
 
-          <Route 
-            path="/login" 
-            element={!session ? <Auth /> : <Navigate to="/dashboard" replace />} 
+          <Route
+            path="/login"
+            element={!session ? <Auth /> : <Navigate to="/dashboard" replace />}
+          />
+
+          <Route
+            path="/reset-password"
+            element={!session ? <ResetPassword /> : <Navigate to="/dashboard" replace />}
           />
           
           <Route 
