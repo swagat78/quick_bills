@@ -1,12 +1,12 @@
-# 🛠️ QuickBills: Industrial Minimalist Invoice Engine
+# QuickBills: Industrial Minimalist Invoice Engine
 
 QuickBills is a high-performance, production-ready SaaS platform designed for the modern business. Featuring an **Industrial Minimalist** aesthetic, it combines lightning-fast invoice generation with enterprise-grade features like AI-powered auto-fill and professional GST management.
 
-## 🌐 Live Demo
+##  Live Demo
 - **Frontend**: [quick-bills-ai.netlify.app](https://quick-bills-ai.netlify.app)
 - **Backend API**: [quick-bills.onrender.com](https://quick-bills.onrender.com)
 
-## 🚀 Key Features
+##  Key Features
 
 - **Industrial Aesthetic**: A high-end, permanent Dark Mode interface built on a tiered slate palette (`slate-950` / `slate-900`) for maximum visual depth and professional feel.
 - **AI-Powered Auto-Fill**: Streamline your workflow with an AI prompt bar that extracts line items and client details from natural language.
@@ -16,7 +16,7 @@ QuickBills is a high-performance, production-ready SaaS platform designed for th
 - **Sticky Workspace**: An optimized editing experience with a pinned action sidebar and fluid vertical scrolling for complex, multi-item invoices.
 - **Public Share Links**: Generate professional, read-only public links for your invoices with real-time status watermarks (PAID, OVERDUE, etc.).
 
-## 💻 Tech Stack
+##  Tech Stack
 
 - **Frontend**: React 18, Tailwind CSS v3, React-Bootstrap, React-Hot-Toast.
 - **Backend**: Node.js, Express.
@@ -25,7 +25,7 @@ QuickBills is a high-performance, production-ready SaaS platform designed for th
 - **Styling**: Vanilla CSS + Tailwind Utility Classes for a hybrid 'Industrial' look.
 - **Deployment**: Netlify (Frontend), Render (Backend).
 
-## 🛠️ Installation & Setup
+## Installation & Setup
 
 1. **Clone the Repository**:
    ```bash
@@ -51,7 +51,7 @@ QuickBills is a high-performance, production-ready SaaS platform designed for th
    cd server && node index.js
    ```
 
-## 🏗️ Architecture
+## Architecture
 
 QuickBills follows a modular component-based architecture:
 - `/src/components`: Reusable UI modules (InvoiceForm, AIPrompt, Dashboard).
@@ -59,6 +59,6 @@ QuickBills follows a modular component-based architecture:
 - `/src/utils`: Pure functional utilities for GST calculations and exports.
 - `/server`: Lightweight Express backend for secure price validation and AI prompt processing.
 
-## 🎨 Design Philosophy
+## Design Philosophy
 
 QuickBills is built on the principle of **"Hard Minimalist"** design. We eliminate unnecessary whitespace, use thin professional borders instead of shadows, and maintain a high-contrast dark palette to create a tool that feels less like a website and more like a piece of high-precision software.
